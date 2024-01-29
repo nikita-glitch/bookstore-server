@@ -8,20 +8,68 @@ import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { BooksModule } from './books/books.module';
-import { ProfileModule } from './profile/profile.module';
+import { CommentsModule } from './comments/comments.module';
+import { BooksAuthorModule } from './books_author/books_author.module';
+import { BooksGenreModule } from './books_genre/books_genre.module';
+import { BooksRatingModule } from './books_rating/books_rating.module';
+import { CartBooksModule } from './cart_books/cart_books.module';
+import { FavoriteBooksModule } from './favorite_books/favorite_books.module';
+import { UserAvatarModule } from './user_avatar/user_avatar.module';
+import { BooksPhotosModule } from './books_photos/books_photos.module';
+import { User } from './users/entities/user.entity';
+import { UserAvatar } from './user_avatar/entities/user_avatar.entity';
+import { Cart } from './cart/entities/cart.entity';
+import { Favorite } from './favorites/entities/favorite.entity';
+import { Book } from './books/entities/books.entity';
+import { BooksAuthor } from './books_author/entities/books_author.entity';
+import { BooksGenre } from './books_genre/entities/books_genre.entity';
+import { BooksRating } from './books_rating/entities/books_rating.entity';
+import { BooksPhoto } from './books_photos/entities/books_photo.entity';
+import { CartBook } from './cart_books/entities/cart_book.entity';
+import { FavoriteBook } from './favorite_books/entities/favorite_book.entity';
+import { Comment } from './comments/entities/comment.entity';
 
-const filePath = '/home/fusion-team/proj/bookstor/server/src/.env'
+const filePath = '/home/fusion-team/proj/bookstor/server/src/.env';
 
 @Module({
-  imports: [ConfigModule.forRoot({ envFilePath: filePath }), TypeOrmModule.forRoot({
-    type: 'postgres',
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    entities: [],
-  }), UsersModule, AuthModule, CartModule, FavoritesModule, BooksModule, ProfileModule],
+  imports: [
+    ConfigModule.forRoot({ envFilePath: filePath }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: [
+        User,
+        UserAvatar,
+        Cart,
+        Favorite,
+        Book,
+        Comment,
+        BooksAuthor,
+        BooksGenre,
+        BooksRating,
+        BooksPhoto,
+        CartBook,
+        FavoriteBook,
+      ],
+    }),
+    UsersModule,
+    AuthModule,
+    CartModule,
+    FavoritesModule,
+    BooksModule,
+    CommentsModule,
+    BooksAuthorModule,
+    BooksGenreModule,
+    BooksRatingModule,
+    CartBooksModule,
+    FavoriteBooksModule,
+    UserAvatarModule,
+    BooksPhotosModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

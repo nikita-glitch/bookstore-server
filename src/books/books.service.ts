@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Book } from './entities/books.entity';
+import { Repository } from 'typeorm';
+import { BooksAuthor } from 'src/books_author/entities/books_author.entity';
+import { BooksGenre } from 'src/books_genre/entities/books_genre.entity';
+import { BooksPhoto } from 'src/books_photos/entities/books_photo.entity';
+import { BooksRating } from 'src/books_rating/entities/books_rating.entity';
 
 @Injectable()
 export class BooksService {
-  create(createBookDto: CreateBookDto) {
+  constructor(
+    @InjectRepository(Book)
+    private bookRep: Repository<Book>,
+    @InjectRepository(BooksAuthor)
+    private booksAuthorRep: Repository<BooksAuthor>,
+    @InjectRepository(BooksGenre)
+    private booksGenreRep: Repository<BooksGenre>,
+    @InjectRepository(BooksPhoto)
+    private booksPhotoRep: Repository<BooksPhoto>,
+    @InjectRepository(BooksRating)
+    private booksRatingRep: Repository<BooksRating>,
+  ) {}
+  async addBook(createBookDto: CreateBookDto) {
     return 'This action adds a new book';
   }
 
-  findAll() {
+  async findAll() {
     return `This action returns all books`;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} book`;
   }
 
-  update(id: number, updateBookDto: UpdateBookDto) {
+  async updateBook(id: number, updateBookDto: UpdateBookDto) {
     return `This action updates a #${id} book`;
   }
 
-  remove(id: number) {
+  async removeBook(id: number) {
     return `This action removes a #${id} book`;
+  }
+
+  async addPhoto() {
+
   }
 }

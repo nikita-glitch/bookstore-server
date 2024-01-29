@@ -1,34 +1,85 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Res, HttpStatus, UploadedFile } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Response } from 'express';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Patch('')
+  async addToCart(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @Patch('')
+  async addToFavorite(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get('profile')
+  async getUser(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch('')
+  async changeProfile(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Delete('')
+  async removeFromCart(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Delete('')
+  async removeFromFavorite(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Patch('')
+  async changePassword(
+    @Param() 
+    userId: string,
+    @Body() 
+    changePasswordDto: ChangePasswordDto,
+    @Res() res: Response
+  ) {
+    await this.usersService.changePassword(userId, changePasswordDto)
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Put('')
+  async addAvatar(
+    @Param()
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
   }
 }
