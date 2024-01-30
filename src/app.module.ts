@@ -28,8 +28,12 @@ import { BooksPhoto } from './books_photos/entities/books_photo.entity';
 import { CartBook } from './cart_books/entities/cart_book.entity';
 import { FavoriteBook } from './favorite_books/entities/favorite_book.entity';
 import { Comment } from './comments/entities/comment.entity';
+import { APP_FILTER } from '@nestjs/core';
+import { customExceptionFilter } from './exceptionFilter/exception.filter';
+import * as path from 'path';
 
-const filePath = '/home/fusion-team/proj/bookstor/server/src/.env';
+
+const filePath = path.join(path.dirname(__dirname), '/src/.env');
 
 @Module({
   imports: [
@@ -55,6 +59,7 @@ const filePath = '/home/fusion-team/proj/bookstor/server/src/.env';
         CartBook,
         FavoriteBook,
       ],
+      synchronize: true,
     }),
     UsersModule,
     AuthModule,
@@ -71,6 +76,9 @@ const filePath = '/home/fusion-team/proj/bookstor/server/src/.env';
     BooksPhotosModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_FILTER,
+    useClass: customExceptionFilter
+  }],
 })
 export class AppModule {}

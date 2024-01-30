@@ -1,8 +1,8 @@
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { DecodedTokenInterface } from "src/interfaces/interfaces";
 
-
+@Injectable()
 export class TokenExtractor {
   constructor(
     private jwtService: JwtService

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } fr
 import { BooksGenreService } from './books_genre.service';
 import { BooksGenreDto } from './dto/books_genre.dto';
 import { Response } from 'express';
-import { IsPublic } from 'src/decorator/auth.decorator';
+import { AuthRequired } from 'src/decorator/auth.decorator';
 import { Roles } from 'src/decorator/role.decorator';
 
 
@@ -10,7 +10,7 @@ import { Roles } from 'src/decorator/role.decorator';
 export class BooksGenreController {
   constructor(private readonly booksGenreService: BooksGenreService) {}
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Roles('admin')
   @Post()
   async create(
@@ -28,7 +28,7 @@ export class BooksGenreController {
     res.status(HttpStatus.OK).json();
   }
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Roles('admin')
   @Patch(':id')
   async update(
@@ -42,7 +42,7 @@ export class BooksGenreController {
     res.status(HttpStatus.OK).json();
   }
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Roles('admin')
   @Delete(':id')
   async remove(

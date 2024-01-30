@@ -37,7 +37,6 @@ export class AuthService {
   
     const person = await this.userRepository
     .createQueryBuilder("user")
-    //.select("user.id", "id")
     .where("user.email = :email", { email: email })
     .addSelect("user.password")
     .getOne()
@@ -45,14 +44,15 @@ export class AuthService {
     if (!person) {
       throw new HttpException('Wrong email or password', HttpStatus.NOT_FOUND);
     }
-
     const comparedPass = await bcrypt.compare(password, person.password);
+    
     if (!comparedPass) {
       throw new HttpException(
         'Wrong email or password',
         HttpStatus.UNAUTHORIZED,
       );
     }
+
     const token = await this.jwtServise.signAsync(
       { id: person.id },
       { secret: process.env.SECRET_KEY },

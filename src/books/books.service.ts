@@ -46,4 +46,20 @@ export class BooksService {
   async addPhoto() {
 
   }
+
+  async addBookToCart() {
+
+  }
+
+  async addBookToFavorites() {
+
+  }
+
+  async removeBookFromCart() {
+
+  }
+
+  async removeBookFromFavorites() {
+    
+  }
 }

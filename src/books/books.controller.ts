@@ -1,15 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, HttpStatus, Res } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Roles } from 'src/decorator/role.decorator';
-import { IsPublic } from 'src/decorator/auth.decorator';
+import { AuthRequired } from 'src/decorator/auth.decorator';
+import { Response } from 'express';
 
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Roles('admin')
   @Post()
   async create(
@@ -34,7 +35,7 @@ export class BooksController {
     return this.booksService.findOne(+id);
   }
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Roles('admin')
   @Patch(':id')
   async update(
@@ -46,7 +47,7 @@ export class BooksController {
     return this.booksService.updateBook(+id, updateBookDto);
   }
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Roles('admin')
   @Delete(':id')
   async remove(
@@ -56,7 +57,7 @@ export class BooksController {
     return this.booksService.removeBook(+id);
   }
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Roles('admin')
   @Put('')
   async addPhoto(
@@ -65,7 +66,7 @@ export class BooksController {
 
   }
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Post()
   async addComment(
 
@@ -73,11 +74,47 @@ export class BooksController {
 
   }
 
-  @IsPublic(false)
+  @AuthRequired(false)
   @Put()
   async setRating(
 
   ) {
 
+  }
+  
+  @Delete('')
+  async removeFromCart(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Delete('')
+  async removeFromFavorite(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Patch('')
+  async addToCart(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Patch('')
+  async addToFavorite(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
   }
 }

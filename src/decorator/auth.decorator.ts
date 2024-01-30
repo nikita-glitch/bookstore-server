@@ -1,3 +1,3 @@
 import { SetMetadata } from "@nestjs/common";
 
-export const IsPublic = (isPublic: boolean) => SetMetadata('isPublic', isPublic)
+export const AuthRequired = (auth: boolean) => SetMetadata('auth', auth)

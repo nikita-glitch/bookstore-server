@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserAvatarDto } from './dto/create-user_avatar.dto';
-import { UpdateUserAvatarDto } from './dto/update-user_avatar.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserAvatar } from './entities/user_avatar.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class UserAvatarService {
-  create(createUserAvatarDto: CreateUserAvatarDto) {
-    return 'This action adds a new userAvatar';
+  constructor(
+    @InjectRepository(UserAvatar)
+    private avatarRep: Repository<UserAvatar>,
+    @InjectRepository(User)
+    private userRep: Repository<User>,
+  ) {}
+
+  async getAvatar(userId: string): Promise<UserAvatar> {
+    const avatar = this.avatarRep.findOneBy({ userId: userId });
+    return avatar;
   }
 
-  findAll() {
-    return `This action returns all userAvatar`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} userAvatar`;
-  }
-
-  update(id: number, updateUserAvatarDto: UpdateUserAvatarDto) {
-    return `This action updates a #${id} userAvatar`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userAvatar`;
+  async uploadAvatar(
+    userId: string,
+    avatarName: string,
+    dataBuffer: Buffer,
+  ): Promise<void> {
+    const user = await this.userRep.findOneBy({ id: userId });
+    if (!user) {
+    }
+    const existedAvatar = await this.avatarRep.findOneBy({ userId: userId });
+    if (existedAvatar) {
+      await this.avatarRep.remove(existedAvatar);
+    }
+    const avatar = this.avatarRep.create({
+      avatarName,
+      data: dataBuffer,
+      user: user,
+    });
+    await this.avatarRep.save(avatar);
   }
 }

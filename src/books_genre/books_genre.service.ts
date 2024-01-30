@@ -2,10 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { BooksGenreDto } from './dto/books_genre.dto';
 import { Repository } from 'typeorm';
 import { BooksGenre } from './entities/books_genre.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class BooksGenreService {
   constructor(
+    @InjectRepository(BooksGenre)
     private booksGenreRep: Repository<BooksGenre>
   ) {}
   async create(booksGenreDto: BooksGenreDto) {
