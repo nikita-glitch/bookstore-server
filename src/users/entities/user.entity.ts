@@ -11,7 +11,7 @@ export class User implements UsersInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true})
   name: string;
 
   @Column({ unique: true })

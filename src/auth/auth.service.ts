@@ -15,7 +15,7 @@ export class AuthService {
     private jwtServise: JwtService,
   ) {}
   async signUp(createUserDto: CreateUserDto) {
-    const { name, email, password } = createUserDto;
+    const { email, password } = createUserDto;
     const person = await this.userRepository.findOneBy({ email: email });
     if (person) {
       throw new HttpException(
@@ -25,7 +25,6 @@ export class AuthService {
     }
     const hashedPass = await bcrypt.hash(password, 3);
     const user = this.userRepository.create({
-      name: name,
       email: email,
       password: hashedPass,
     });

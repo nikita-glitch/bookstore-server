@@ -5,7 +5,7 @@ export interface BooksInterface {
 }
 
 export interface UsersInterface {
-  name: string;
+  name?: string;
   email: string;
   password: string;
 }

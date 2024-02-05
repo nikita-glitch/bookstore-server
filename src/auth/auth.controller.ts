@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Res, HttpStatus, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ValidationPipe } from 'src/pipe/validation.pipe';
 import { signInSchema, signUpSchema } from 'src/validationSchemas/auth.schema';
 
@@ -12,11 +12,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   
   @Post('sign-up')
-  @UsePipes(new ValidationPipe(signUpSchema))
+  //@UsePipes(new ValidationPipe(signUpSchema))
   async auth(
     @Body() createUserDto: CreateUserDto,
     @Res() res: Response,
+    @Req() req: Request
   ): Promise<any> {
+    
     await this.authService.signUp(createUserDto);
     return res
       .status(HttpStatus.CREATED)
