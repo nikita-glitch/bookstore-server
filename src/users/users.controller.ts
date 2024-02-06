@@ -57,10 +57,10 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
     @Res() res: Response,
   ) {
-    await this.usersService.changeProfileData(userId, updateUserDto);
+    const name = await this.usersService.changeProfileData(userId, updateUserDto);
     return res
       .status(HttpStatus.OK)
-      .json({ message: 'Profile updated succsessfully' });
+      .json({ message: 'Profile updated succsessfully', name });
   }
 
   @Patch('profile/password-change')

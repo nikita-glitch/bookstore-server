@@ -15,12 +15,14 @@ export class UsersService {
     private userAvatarService: UserAvatarService,
   ) {}
 
-  async changeProfileData(userId: string, updateUserDto: UpdateUserDto) {
+  async changeProfileData(userId: string, updateUserDto: UpdateUserDto): Promise<string> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new HttpException('User does not found', HttpStatus.NOT_FOUND);
-    }
+    }    
     await this.userRepository.update(userId, updateUserDto);
+    const userAfterUpdate = await this.userRepository.findOneBy({ id: userId });
+    return userAfterUpdate.name
   }
 
   async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
