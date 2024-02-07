@@ -1,20 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, Res, HttpStatus, UseGuards } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import { Response } from 'express';
+import { AuthGuard } from 'src/Guards/authGuard';
 
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartService.create(createCartDto);
+  @UseGuards(AuthGuard)
+  @Get('')
+  async findOne(
+    @Param('userId') 
+    userId: string,
+    @Res() res: Response
+    ) {
+    const cart = await this.cartService.getCartById(userId);
+    return res.status(HttpStatus.OK).json(cart)
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-  }
-
-
 }

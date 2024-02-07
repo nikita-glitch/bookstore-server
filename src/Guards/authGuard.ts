@@ -21,12 +21,6 @@ export class AuthGuard implements CanActivate {
     private reflector: Reflector,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {    
-    // const isAuthRequired = this.reflector.get<boolean>('auth', context.getHandler())    
-    // console.log(isAuthRequired);
-    
-    // if (!isAuthRequired) {
-    //   return true
-    // }
     const req = context.switchToHttp().getRequest();    
     const tokenExtractor = new TokenExtractor(this.jwtService);
     const decodedToken = await tokenExtractor.extract(req);

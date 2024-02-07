@@ -1,21 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, HttpStatus } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
+import { AuthGuard } from 'src/Guards/authGuard';
+import { Response } from 'express';
 
 @Controller('favorites')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
-  @Post()
-  create(@Body() createFavoriteDto: CreateFavoriteDto) {
-    return this.favoritesService.create(createFavoriteDto);
+  @UseGuards(AuthGuard)
+  @Get('')
+  async findOne(
+    @Param('userId') 
+    userId: string,
+    @Res() res: Response
+    ): Promise<Response<any, Record<string, any>>> {
+    const cart = await this.favoritesService.getFavoriteById(userId)
+    return res.status(HttpStatus.OK).json(cart) 
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    
-  }
-
- 
 }

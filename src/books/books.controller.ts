@@ -1,16 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, HttpStatus, Res, UseGuards } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Roles } from 'src/decorator/role.decorator';
-import { AuthRequired } from 'src/decorator/auth.decorator';
 import { Response } from 'express';
+import { AuthGuard } from 'src/Guards/authGuard';
 
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Roles('admin')
   @Post()
   async create(
@@ -20,7 +20,7 @@ export class BooksController {
     return this.booksService.addBook(createBookDto);
   }
 
-  @Get()
+  @Get('')
   async findAll(
     //@Query()
   ) {
@@ -32,10 +32,10 @@ export class BooksController {
     @Param('id') 
     id: string
     ) {
-    return this.booksService.findOne(+id);
+    return this.booksService.findOne(id);
   }
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Roles('admin')
   @Patch(':id')
   async update(
@@ -47,7 +47,7 @@ export class BooksController {
     return this.booksService.updateBook(+id, updateBookDto);
   }
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Roles('admin')
   @Delete(':id')
   async remove(
@@ -57,7 +57,7 @@ export class BooksController {
     return this.booksService.removeBook(+id);
   }
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Roles('admin')
   @Put('')
   async addPhoto(
@@ -66,7 +66,7 @@ export class BooksController {
 
   }
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Post()
   async addComment(
 
@@ -74,7 +74,7 @@ export class BooksController {
 
   }
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Put()
   async setRating(
 

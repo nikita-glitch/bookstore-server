@@ -1,16 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res, UseGuards } from '@nestjs/common';
 import { BooksGenreService } from './books_genre.service';
 import { BooksGenreDto } from './dto/books_genre.dto';
 import { Response } from 'express';
-import { AuthRequired } from 'src/decorator/auth.decorator';
 import { Roles } from 'src/decorator/role.decorator';
+import { AuthGuard } from 'src/Guards/authGuard';
 
 
 @Controller('books-genre')
 export class BooksGenreController {
   constructor(private readonly booksGenreService: BooksGenreService) {}
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Roles('admin')
   @Post()
   async create(
@@ -28,7 +28,7 @@ export class BooksGenreController {
     res.status(HttpStatus.OK).json();
   }
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Roles('admin')
   @Patch(':id')
   async update(
@@ -42,7 +42,7 @@ export class BooksGenreController {
     res.status(HttpStatus.OK).json();
   }
 
-  @AuthRequired(false)
+  @UseGuards(AuthGuard)
   @Roles('admin')
   @Delete(':id')
   async remove(

@@ -24,14 +24,24 @@ export class BooksService {
     private booksRatingRep: Repository<BooksRating>,
   ) {}
   async addBook(createBookDto: CreateBookDto) {
-    return 'This action adds a new book';
+    const { title, description, price, author_name, genre_name } = createBookDto;
+    const book = this.bookRep.create({
+      title: title,
+      description: description,
+      price: price
+    })
+    await this.bookRep.save(book);
+    const genre = await this.booksGenreRep.findOneBy({ genre_name: genre_name })
+    const author = await this.booksAuthorRep.findOneBy({ author_name: author_name });
+    await this.booksGenreRep.update(genre.id, { book: book})
+    await this.booksAuthorRep.update(author.id, { book: book})
   }
 
   async findAll() {
-    return `This action returns all books`;
+    return this.bookRep.findBy({})
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return `This action returns a #${id} book`;
   }
 

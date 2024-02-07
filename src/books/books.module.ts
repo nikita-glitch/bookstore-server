@@ -7,9 +7,11 @@ import { BooksAuthor } from 'src/books_author/entities/books_author.entity';
 import { BooksGenre } from 'src/books_genre/entities/books_genre.entity';
 import { BooksPhoto } from 'src/books_photos/entities/books_photo.entity';
 import { BooksRating } from 'src/books_rating/entities/books_rating.entity';
+import { User } from 'src/users/entities/user.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Book, BooksAuthor, BooksGenre, BooksPhoto, BooksRating])],
+  imports: [TypeOrmModule.forFeature([Book, BooksAuthor, BooksGenre, BooksPhoto, BooksRating, User]), JwtModule],
   controllers: [BooksController, ],
   providers: [BooksService],
 })

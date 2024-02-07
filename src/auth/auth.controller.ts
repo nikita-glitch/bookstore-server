@@ -17,7 +17,7 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
     @Res() res: Response,
     @Req() req: Request
-  ): Promise<any> {
+  ): Promise<Response<any, Record<string, any>>> {
     
     await this.authService.signUp(createUserDto);
     return res
@@ -30,7 +30,7 @@ export class AuthController {
   async login(
     @Body() loginUserDto: LoginUserDto,
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<Response<any, Record<string, any>>> {
     const tokenData = await this.authService.signIn(loginUserDto)
     return res
       .status(HttpStatus.OK)
