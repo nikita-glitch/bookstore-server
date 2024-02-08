@@ -6,7 +6,7 @@ import { CartBook } from "src/cart_books/entities/cart_book.entity";
 import { Comment } from "src/comments/entities/comment.entity";
 import { FavoriteBook } from "src/favorite_books/entities/favorite_book.entity";
 import { BooksInterface } from "src/interfaces/interfaces";
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -21,13 +21,21 @@ export class Book implements BooksInterface {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ type: 'double precision' })
   price: number;
 
+  @Column()
+  authorId: string;
+
+  @Column()
+  genreId: string;
+
   @OneToOne(() => BooksAuthor, (author) => author.book)
+  @JoinColumn()
   author: BooksAuthor;
 
-  @OneToOne(() => BooksGenre, (genre) => genre.book)
+  @ManyToOne(() => BooksGenre, (genre) => genre.book)
+  @JoinColumn()
   genre: BooksGenre;
 
   @OneToOne(() =>  BooksRating, (rating) => rating.book)

@@ -71,3 +71,4 @@ export class UsersService {
     return this.userAvatarService.getAvatar(userId);
   }
 }
+

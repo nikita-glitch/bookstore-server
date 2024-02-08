@@ -15,16 +15,18 @@ export class BooksController {
   @Post()
   async create(
     @Body() 
-    createBookDto: CreateBookDto
+    createBookDto: CreateBookDto,
+    @Res() res: Response
     ) {
-    return this.booksService.addBook(createBookDto);
+    await this.booksService.addBook(createBookDto);
+    res.status(HttpStatus.CREATED).json({message: 'Created'})
   }
 
   @Get('')
   async findAll(
     //@Query()
   ) {
-    return this.booksService.findAll();
+    return await this.booksService.findAll();
   }
 
   @Get(':id')

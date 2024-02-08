@@ -28,8 +28,8 @@ export class BooksAuthorController {
     booksAuthorDto: BooksAuthorDto,
     @Res() res: Response,
   ) {
-    this.booksAuthorService.create(booksAuthorDto);
-    res.status(HttpStatus.CREATED).json();
+    await this.booksAuthorService.create(booksAuthorDto);
+    res.status(HttpStatus.CREATED).json({ message: 'created succsessfully'});
   }
 
   @Get()

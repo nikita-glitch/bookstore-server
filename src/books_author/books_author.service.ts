@@ -13,7 +13,7 @@ export class BooksAuthorService {
   async create(booksAuthorDto: BooksAuthorDto) {
     const isNameExists = await this.booksAuthorRep.findOneBy({ author_name: booksAuthorDto.author_name });
     if (isNameExists) {
-      throw new HttpException('Author already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Author alredy exist', HttpStatus.BAD_REQUEST);
     }
     const author = this.booksAuthorRep.create(booksAuthorDto);
     await this.booksAuthorRep.save(author);

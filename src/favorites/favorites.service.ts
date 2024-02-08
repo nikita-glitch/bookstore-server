@@ -13,23 +13,17 @@ export class FavoritesService {
     @InjectRepository(User)
     private userRep: Repository<User>
   ) {}
-  async create(userId: string): Promise<Favorite> {
-    const user = await this.userRep.findOneBy({ id: userId })
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND)
-    }
-    const favorites = this.favoritesRep.create({
-      user: user
-    })
+  async create(): Promise<Favorite> {
+    const favorites = this.favoritesRep.create()
     await this.favoritesRep.save(favorites)
     return favorites
   }
 
-  async getFavoriteById(userId: string): Promise<Favorite> {
-    const favorite = this.favoritesRep.findOneBy({ userId: userId })
-    if (!favorite) {
-      throw new HttpException('Favorite not found', HttpStatus.NOT_FOUND)
-    }
-    return favorite
+  async getFavoriteById(userId: string){
+    // const favorite = this.favoritesRep.findOneBy({ userId: userId })
+    // if (!favorite) {
+    //   throw new HttpException('Favorite not found', HttpStatus.NOT_FOUND)
+    // }
+    // return favorite
   }
 }

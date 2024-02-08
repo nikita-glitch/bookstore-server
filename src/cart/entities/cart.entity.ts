@@ -16,15 +16,11 @@ export class Cart implements CartInterface {
   @Column({ default: false })
   has_paid: boolean;
 
-  @Column()
-  userId: string;
-
   @OneToMany(() => CartBook, (cartBook) => cartBook.cart, {
     onDelete: 'CASCADE'
   })
   cartBooks: CartBook[]
 
   @OneToOne(() => User, (user) => user.cart)
-  @JoinColumn()
   user: User
 }

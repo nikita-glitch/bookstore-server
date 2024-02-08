@@ -3,7 +3,7 @@ import { Comment } from "src/comments/entities/comment.entity";
 import { Favorite } from "src/favorites/entities/favorite.entity";
 import { UsersInterface } from "src/interfaces/interfaces";
 import { UserAvatar } from "src/user_avatar/entities/user_avatar.entity";
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User implements UsersInterface {
@@ -23,17 +23,25 @@ export class User implements UsersInterface {
   @Column({ default: 'user' })
   role: string;
 
-  @OneToOne(() => Cart, (cart) => cart.user, {
-    onDelete: 'CASCADE'
-  })
+  @Column()
+  cartId: string;
+
+  @Column()
+  favoriteId: string;
+
+  @OneToOne(() => Cart, (cart) => cart.user)
+  @JoinColumn()
   cart: Cart;
 
   @OneToOne(() => Favorite, (favorite) => favorite.user, {
     onDelete: 'CASCADE'
   })
+  @JoinColumn()
   favorite: Favorite;
 
-  @OneToMany(() => Comment, (comment) => comment.user)
+  @OneToMany(() => Comment, (comment) => comment.user, {
+    onDelete: 'CASCADE'
+  })
   comments: Comment[]
 
   @OneToOne(() => UserAvatar, (avatar) => avatar.user, {

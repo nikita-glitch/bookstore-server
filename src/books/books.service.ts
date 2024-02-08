@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,16 +25,19 @@ export class BooksService {
   ) {}
   async addBook(createBookDto: CreateBookDto) {
     const { title, description, price, author_name, genre_name } = createBookDto;
+    const genre = await this.booksGenreRep.findOneBy({ genre_name: genre_name })
+    const author = await this.booksAuthorRep.findOneBy({ author_name: author_name });
+    if (!author || !genre) {
+      throw new HttpException('Author or genre not found', HttpStatus.NOT_FOUND);
+    }
     const book = this.bookRep.create({
       title: title,
       description: description,
-      price: price
+      price: price,
+      genre: genre,
+      author: author
     })
     await this.bookRep.save(book);
-    const genre = await this.booksGenreRep.findOneBy({ genre_name: genre_name })
-    const author = await this.booksAuthorRep.findOneBy({ author_name: author_name });
-    await this.booksGenreRep.update(genre.id, { book: book})
-    await this.booksAuthorRep.update(author.id, { book: book})
   }
 
   async findAll() {
@@ -42,11 +45,10 @@ export class BooksService {
   }
 
   async findOne(id: string) {
-    return `This action returns a #${id} book`;
+    
   }
 
   async updateBook(id: number, updateBookDto: UpdateBookDto) {
-    return `This action updates a #${id} book`;
   }
 
   async removeBook(id: number) {

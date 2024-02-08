@@ -29,14 +29,16 @@ export class AuthService {
       );
     }
     const hashedPass = await bcrypt.hash(password, 3);
-    
+    const cart = await this.cartService.create();
+    const favorite = await this.favoritesService.create();  
     const user = this.userRepository.create({
       email: email,
       password: hashedPass,
+      favorite: favorite,
+      cart: cart
     });    
     await this.userRepository.save(user)
-    await this.cartService.create(user.id);
-    await this.favoritesService.create(user.id);    
+    return user
   }
 
   async signIn(loginUserDto: LoginUserDto) {
@@ -64,7 +66,7 @@ export class AuthService {
       { id: person.id },
       { secret: process.env.SECRET_KEY },
     );
-    return token;
+    return {token: token, user: person };
   }
 
 }

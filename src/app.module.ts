@@ -74,6 +74,7 @@ const filePath = path.join(path.dirname(__dirname), '/src/.env');
     FavoriteBooksModule,
     UserAvatarModule,
     BooksPhotosModule,
+  
   ],
   controllers: [AppController],
   providers: [AppService, {

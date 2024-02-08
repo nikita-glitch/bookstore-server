@@ -19,13 +19,13 @@ export class BooksGenreController {
     @Res() res: Response,
   ) {
     this.booksGenreService.create(booksAuthorDto);
-    res.status(HttpStatus.CREATED).json();
+    res.status(HttpStatus.CREATED).json({message: "created"});
   }
 
-  @Get()
+  @Get('')
   async findAll(@Res() res: Response) {
-    this.booksGenreService.findAll();
-    res.status(HttpStatus.OK).json();
+    const genres = await this.booksGenreService.findAll();
+    res.status(HttpStatus.OK).json(genres);
   }
 
   @UseGuards(AuthGuard)

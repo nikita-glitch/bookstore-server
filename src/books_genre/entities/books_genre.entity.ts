@@ -1,6 +1,6 @@
 import { Book } from "src/books/entities/books.entity";
 import { Books_Genre_Interface } from "src/interfaces/interfaces";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -12,10 +12,6 @@ export class BooksGenre implements Books_Genre_Interface {
   @Column({ unique: true })
   genre_name: string;
 
-  @Column({ nullable: true })
-  bookId: string
-
-  @OneToOne(() => Book, (book) => book.genre)
-  @JoinColumn()
+  @OneToMany(() => Book, (book) => book.genre)
   book: Book
 }

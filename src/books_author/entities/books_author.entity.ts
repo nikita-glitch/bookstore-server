@@ -11,10 +11,6 @@ export class BooksAuthor implements Books_Author_Interface {
   @Column({ unique: true })
   author_name: string;
 
-  @Column({ nullable: true })
-  bookId: string
-
   @OneToOne(() => Book, (book) => book.author)
-  @JoinColumn()
   book: Book
 }
