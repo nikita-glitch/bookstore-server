@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserAvatar } from './entities/user_avatar.entity';
@@ -25,6 +25,7 @@ export class UserAvatarService {
   ): Promise<void> {
     const user = await this.userRep.findOneBy({ id: userId });
     if (!user) {
+      throw new HttpException('User does not found', HttpStatus.NOT_FOUND);
     }
     const existedAvatar = await this.avatarRep.findOneBy({ userId: userId });
     if (existedAvatar) {

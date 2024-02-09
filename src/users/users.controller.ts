@@ -86,6 +86,8 @@ export class UsersController {
     file: Express.Multer.File,
     @Res() res: Response,
   ) {
+    console.log(file);
+    
     await this.usersService.addUserAvatar(
       userId,
       file.originalname,

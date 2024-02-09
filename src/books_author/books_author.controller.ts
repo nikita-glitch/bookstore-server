@@ -38,6 +38,16 @@ export class BooksAuthorController {
     res.status(HttpStatus.OK).json();
   }
 
+  @Get('author')
+  async findOne(
+    @Body()
+    id: string,
+    @Res() res: Response
+    ) {
+    const author = await this.booksAuthorService.findOne(id);
+    res.status(HttpStatus.OK).json(author);
+  }
+
   @UseGuards(AuthGuard)
   @Roles('admin')
   @Patch('')

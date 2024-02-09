@@ -59,7 +59,7 @@ const filePath = path.join(path.dirname(__dirname), '/src/.env');
         CartBook,
         FavoriteBook,
       ],
-      synchronize: true,
+      // synchronize: true,
     }),
     UsersModule,
     AuthModule,

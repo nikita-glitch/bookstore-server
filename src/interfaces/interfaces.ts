@@ -33,7 +33,7 @@ export interface CommentInterface {
 
 export interface User_Avatar_Interface {
   avatarName: string;
-  data: Uint8Array
+  data: Uint8Array;
 }
 
 export interface Books_Photos_Interface {
@@ -48,4 +48,13 @@ export interface DecodedTokenInterface {
   id: string;
   iat: number;
   exp: number;
+}
+
+export interface SortOptionsInterface {
+  genreId: string;
+  priceRange: {
+    min: number;
+    max: number;
+  };
+  sort: string;
 }

@@ -23,6 +23,9 @@ export class BooksAuthorService {
     return this.booksAuthorRep.find({})
   }
 
+  async findOne(id: string): Promise<BooksAuthor> {
+    return this.booksAuthorRep.findOneBy({ id: id })
+  }
 
   async update(id: number, booksAuthorDto: BooksAuthorDto) {
     const isNameExists = this.booksAuthorRep.findOneBy({ author_name: booksAuthorDto.author_name})

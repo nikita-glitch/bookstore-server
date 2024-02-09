@@ -5,6 +5,7 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { Roles } from 'src/decorator/role.decorator';
 import { Response } from 'express';
 import { AuthGuard } from 'src/Guards/authGuard';
+import { SortOptionsInterface } from 'src/interfaces/interfaces';
 
 @Controller('books')
 export class BooksController {
@@ -24,9 +25,13 @@ export class BooksController {
 
   @Get('')
   async findAll(
-    //@Query()
+    @Query('paginationOffset')
+      paginationOffset: number,
+    @Query('sortOptions')
+      sortOptions: SortOptionsInterface
   ) {
-    return await this.booksService.findAll();
+    const books =  await this.booksService.findAll(paginationOffset, sortOptions);
+    return books
   }
 
   @Get(':id')
