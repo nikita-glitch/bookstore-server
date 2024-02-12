@@ -9,6 +9,7 @@ import { BooksGenre } from 'src/books_genre/entities/books_genre.entity';
 import { BooksPhoto } from 'src/books_photos/entities/books_photo.entity';
 import { BooksRating } from 'src/books_rating/entities/books_rating.entity';
 import { SortOptionsInterface } from 'src/interfaces/interfaces';
+import { title } from 'process';
 
 @Injectable()
 export class BooksService {
@@ -50,38 +51,59 @@ export class BooksService {
     await this.bookRep.save(book);
   }
 
-  async findAll(paginationOffset: number, sortOptions: SortOptionsInterface) {
-    const { genreId, priceRange, sort } = sortOptions;
-    // const [result, total] = await this.bookRep.findAndCount({
-    //   where: {
-    //     genreId: genreId,
-    //     price: Between(priceRange.min, priceRange.max) 
-    //   },
-    //   relations: {
-    //     author: true,
-    //   },
-    //   order: {
-    //     // sortBy: "ASC"
-    //   },
-    //   take: 12,
-    //   skip: paginationOffset,
-    // });
-    const [result, total] = await this.bookRep
-    .createQueryBuilder('book')
-    .from(Book, 'book')
-    .where('book.genreId = :genreId', {genreId: genreId})
-    .andWhere('book.price = :price', { price: priceRange.min })
-    .andWhere('book.price = :price', { price: priceRange.max })
-    .orderBy(sort, "ASC")
-    .limit(12)
-    .offset(paginationOffset)
-    .getManyAndCount()
+  async findAll(
+    paginationOffset: number,
+    searchString?: string,
+    sortOptions?: SortOptionsInterface,
+  ): Promise<{ result: Book[]; total: number }> {
+    const builder = this.bookRep
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.author', 'author');
 
-    // .orderBy(sort, "ASC")
-    return {result, total}
+    if (searchString) {
+      builder
+        .where('book.title LIKE :searchString', {
+          searchString: `%${searchString}%`,
+        })
+        .orWhere('book.description LIKE :searchString', {
+          searchString: `%${searchString}%`,
+        });
+    }
+    if (sortOptions) {
+      const { genreId, priceRange, sort } = sortOptions;
+
+      if (genreId) {
+        builder.andWhere('book.genreId = :genreId', { genreId: genreId });
+      }
+
+      if (priceRange) {
+        builder.andWhere('book.price >= :min AND book.price <= :max', {
+          min: parseInt(priceRange[0]),
+          max: parseInt(priceRange[1]),
+        });
+      }
+
+      if (sort) {
+        builder.orderBy(sort, 'DESC');
+      }
+    }
+    const [result, total] = await builder
+      .limit(12)
+      .offset((paginationOffset - 1) * 12)
+      .getManyAndCount();
+
+    return { result, total };
   }
 
-  async findOne(id: string) {}
+  async findOne(id: string) {
+    const book = this.bookRep.findOne({
+      where: { id: id },
+      relations: {
+        author: true,
+      },
+    });
+    return book;
+  }
 
   async updateBook(id: number, updateBookDto: UpdateBookDto) {}
 
@@ -90,12 +112,4 @@ export class BooksService {
   }
 
   async addPhoto() {}
-
-  async addBookToCart() {}
-
-  async addBookToFavorites() {}
-
-  async removeBookFromCart() {}
-
-  async removeBookFromFavorites() {}
 }

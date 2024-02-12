@@ -51,10 +51,10 @@ export interface DecodedTokenInterface {
 }
 
 export interface SortOptionsInterface {
-  genreId: string;
-  priceRange: {
+  genreId?: string;
+  priceRange?: {
     min: number;
     max: number;
   };
-  sort: string;
+  sort?: string;
 }

@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   UseGuards,
   StreamableFile,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -96,5 +97,41 @@ export class UsersController {
     return res
       .status(HttpStatus.OK)
       .json({ message: 'Avatar uploaded succsessfully' });
+  }
+
+  @Delete('')
+  async removeFromCart(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Delete('')
+  async removeFromFavorite(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Patch('')
+  async addToCart(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
+  }
+
+  @Patch('')
+  async addToFavorite(
+    @Param()
+    @Body()
+    @Res() res: Response
+  ) {
+    return res.status(HttpStatus.OK).json()
   }
 }

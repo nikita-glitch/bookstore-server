@@ -70,5 +70,13 @@ export class UsersService {
   async getUserAvatar(userId: string) {
     return this.userAvatarService.getAvatar(userId);
   }
+
+  async addBookToCart() {}
+
+  async addBookToFavorites() {}
+
+  async removeBookFromCart() {}
+
+  async removeBookFromFavorites() {}
 }
 

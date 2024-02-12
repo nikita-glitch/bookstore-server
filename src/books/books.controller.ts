@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, HttpStatus, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, HttpStatus, Res, UseGuards, Req } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Roles } from 'src/decorator/role.decorator';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthGuard } from 'src/Guards/authGuard';
 import { SortOptionsInterface } from 'src/interfaces/interfaces';
 
@@ -28,18 +28,22 @@ export class BooksController {
     @Query('paginationOffset')
       paginationOffset: number,
     @Query('sortOptions')
-      sortOptions: SortOptionsInterface
+      sortOptions: SortOptionsInterface,
+    @Query('searchString')
+      searchString: string  
   ) {
-    const books =  await this.booksService.findAll(paginationOffset, sortOptions);
+    const books =  await this.booksService.findAll(paginationOffset, searchString, sortOptions);
     return books
   }
 
   @Get(':id')
   async findOne(
     @Param('id') 
-    id: string
-    ) {
-    return this.booksService.findOne(id);
+    id: string,
+    @Req() req: Request
+    ) {      
+    const book = await this.booksService.findOne(id);
+    return book
   }
 
   @UseGuards(AuthGuard)
@@ -89,39 +93,5 @@ export class BooksController {
 
   }
   
-  @Delete('')
-  async removeFromCart(
-    @Param()
-    @Body()
-    @Res() res: Response
-  ) {
-    return res.status(HttpStatus.OK).json()
-  }
 
-  @Delete('')
-  async removeFromFavorite(
-    @Param()
-    @Body()
-    @Res() res: Response
-  ) {
-    return res.status(HttpStatus.OK).json()
-  }
-
-  @Patch('')
-  async addToCart(
-    @Param()
-    @Body()
-    @Res() res: Response
-  ) {
-    return res.status(HttpStatus.OK).json()
-  }
-
-  @Patch('')
-  async addToFavorite(
-    @Param()
-    @Body()
-    @Res() res: Response
-  ) {
-    return res.status(HttpStatus.OK).json()
-  }
 }
