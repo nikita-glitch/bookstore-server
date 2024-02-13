@@ -71,12 +71,28 @@ export class UsersService {
     return this.userAvatarService.getAvatar(userId);
   }
 
-  async addBookToCart() {}
+  async addBookToCart() {
 
-  async addBookToFavorites() {}
+  }
 
-  async removeBookFromCart() {}
+  async addBookToFavorites() {
 
-  async removeBookFromFavorites() {}
+  }
+
+  async removeBookFromCart() {
+
+  }
+
+  async removeBookFromFavorites() {
+    
+  }
+
+  async setRating() {
+    
+  }
+
+  async createComment() {
+    
+  }
 }
 

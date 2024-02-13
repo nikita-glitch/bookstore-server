@@ -1,1 +1,3 @@
-export class CreateFavoriteBookDto {}
+export class CreateFavoriteBookDto {
+  bookId: string;
+}

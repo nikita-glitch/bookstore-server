@@ -13,9 +13,7 @@ export class FavoriteBook {
   @Column()
   bookId: string;
 
-  @ManyToOne(() => Favorite, (cart) => cart.favoriteBooks, {
-    onDelete: 'CASCADE'
-  })
+  @ManyToOne(() => Favorite, (cart) => cart.favoriteBooks)
   favorite: Favorite
 
   @OneToOne(() => Book, (book) => book.favoriteBook)

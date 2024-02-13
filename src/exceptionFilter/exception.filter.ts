@@ -12,7 +12,7 @@ export class customExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const message = exception.message;
-      return res.status(status).json({message});
+      return res.status(status).json(message);
     }
     
     if (exception instanceof ValidationError) {

@@ -59,6 +59,7 @@ export class BooksService {
     const builder = this.bookRep
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author');
+      //.leftJoinAndSelect('book.rating', 'rating');
 
     if (searchString) {
       builder
@@ -82,16 +83,20 @@ export class BooksService {
           max: parseInt(priceRange[1]),
         });
       }
-
+      
       if (sort) {
-        builder.orderBy(sort, 'DESC');
+        if (sort !== 'author.author_name') {
+          builder.orderBy(`book.${sort}`, 'DESC');
+        } else {
+          builder.orderBy(sort, 'DESC');
+        }
+        
       }
     }
     const [result, total] = await builder
-      .limit(12)
-      .offset((paginationOffset - 1) * 12)
-      .getManyAndCount();
-
+      .take(12)
+      .skip((paginationOffset - 1) * 12)
+      .getManyAndCount();    
     return { result, total };
   }
 
@@ -100,6 +105,7 @@ export class BooksService {
       where: { id: id },
       relations: {
         author: true,
+        rating: true
       },
     });
     return book;
