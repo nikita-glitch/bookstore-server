@@ -5,17 +5,46 @@ import { Response } from 'express';
 
 @Controller('favorites')
 export class FavoritesController {
-  constructor(private readonly favoritesService: FavoritesService) {}
+  constructor(
+    private favoritesService: FavoritesService
+    ) {}
 
   @UseGuards(AuthGuard)
   @Get('')
-  async findOne(
+  async getAllBooks(
     @Param('userId') 
     userId: string,
     @Res() res: Response
     ): Promise<Response<any, Record<string, any>>> {
-    const cart = await this.favoritesService.getFavoriteById(userId)
-    return res.status(HttpStatus.OK).json(cart) 
+    const favorite = await this.favoritesService.getBooksInFavorite(userId)
+    return res.status(HttpStatus.OK).json(favorite) 
   }
 
+  @Post()
+  @UseGuards(AuthGuard)
+  async addBookToFavorite(
+    @Param('userId')
+    userId: string,
+    @Body() 
+    bookId: string,
+    @Res() res: Response
+    ) {
+    await this.favoritesService.addBookToFavorite(bookId, userId);
+    return res.status(HttpStatus.OK).json({ message: "Book was succsessfully add" })
+  }
+
+  @Delete('')
+  @UseGuards(AuthGuard)
+  async deleteFromFavorite(
+    @Param('userId')
+    userId: string,
+    @Body() 
+    bookId: string,
+    @Res() res: Response 
+  ) {
+    console.log(bookId);
+    
+    await this.favoritesService.removeBookFromFavorite(bookId, userId)
+    return res.status(HttpStatus.OK).json({ message: "Book was succsessfully delete" })
+  }
 }

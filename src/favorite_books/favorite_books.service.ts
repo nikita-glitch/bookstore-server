@@ -1,6 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateFavoriteBookDto } from './dto/create-favorite_book.dto';
-import { UpdateFavoriteBookDto } from './dto/update-favorite_book.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FavoriteBook } from './entities/favorite_book.entity';
 import { Repository } from 'typeorm';
@@ -17,17 +15,17 @@ export class FavoriteBooksService {
     @InjectRepository(Book)
     private bookRep: Repository<Book>,
   ) {}
-  async create(createFavoriteBookDto: CreateFavoriteBookDto, userId: string) {
-    const { bookId } = createFavoriteBookDto;
-    const isInFavorite = await this.favoriteBookRep.findOneBy({ bookId: bookId })
-    if (isInFavorite) {
-      throw new HttpException('Book is alredy in favorite', HttpStatus.BAD_REQUEST);
-    }
+  async create(bookId: string, userId: string) {
+    
+
     const userFavorite = await this.favoriteRep.findOneBy({ userId: userId });
     if (!userFavorite) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
+    const isInFavorite = await this.favoriteBookRep.findOneBy({ bookId: bookId, favoriteId: userFavorite.id })
+    if (isInFavorite) {
+      throw new HttpException('Book is alredy in favorite', HttpStatus.BAD_REQUEST);
+    }
     const book = await this.bookRep.findOneBy({ id: bookId })
     if (!book) {
       throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
@@ -39,19 +37,27 @@ export class FavoriteBooksService {
     await this.favoriteBookRep.save(favBook)
   }
 
-  findAll() {
-    return `This action returns all favoriteBooks`;
+  async findAllBooks(favoriteId: string) {
+    const booksInFavorite = this.favoriteBookRep.find({
+      where: {
+        favoriteId: favoriteId,
+      },
+      relations: {
+        book: true
+      }
+    })
+    return booksInFavorite
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} favoriteBook`;
-  }
-
-  update(id: number, updateFavoriteBookDto: UpdateFavoriteBookDto) {
-    return `This action updates a #${id} favoriteBook`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} favoriteBook`;
+  async remove(bookId: string, userId: string) {
+    const favorite = await this.favoriteRep.findOneBy({ userId: userId })
+    if (!favorite) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    const favBook = await this.favoriteBookRep.findOneBy({
+      favoriteId: favorite.id,
+      bookId: bookId
+    })
+    await this.favoriteBookRep.remove(favBook);
   }
 }

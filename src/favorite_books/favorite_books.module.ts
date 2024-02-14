@@ -9,8 +9,9 @@ import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { Book } from 'src/books/entities/books.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, FavoriteBook, Favorite, Book]), JwtModule],
+  imports: [TypeOrmModule.forFeature([User, FavoriteBook, Favorite, Book])],
   controllers: [FavoriteBooksController],
   providers: [FavoriteBooksService],
+  exports: [FavoriteBooksService]
 })
 export class FavoriteBooksModule {}

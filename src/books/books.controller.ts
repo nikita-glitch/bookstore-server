@@ -32,7 +32,7 @@ export class BooksController {
     @Query('searchString')
       searchString: string  
   ) {
-    const books =  await this.booksService.findAll(paginationOffset, searchString, sortOptions);
+    const books = await this.booksService.findAll(paginationOffset, searchString, sortOptions);
     return books
   }
 

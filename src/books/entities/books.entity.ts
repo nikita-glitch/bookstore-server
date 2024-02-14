@@ -35,7 +35,6 @@ export class Book implements BooksInterface {
   author: BooksAuthor;
 
   @ManyToOne(() => BooksGenre, (genre) => genre.book)
-  @JoinColumn()
   genre: BooksGenre;
 
   @OneToOne(() =>  BooksRating, (rating) => rating.book)

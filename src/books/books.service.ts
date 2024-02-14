@@ -59,7 +59,7 @@ export class BooksService {
     const builder = this.bookRep
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author');
-      //.leftJoinAndSelect('book.rating', 'rating');
+    //.leftJoinAndSelect('book.rating', 'rating');
 
     if (searchString) {
       builder
@@ -72,9 +72,14 @@ export class BooksService {
     }
     if (sortOptions) {
       const { genreId, priceRange, sort } = sortOptions;
-
+      
       if (genreId) {
-        builder.andWhere('book.genreId = :genreId', { genreId: genreId });
+        genreId.map((genre) => {
+          if (genre === '') {
+            return
+          }
+          builder.andWhere('book.genreId = :genreId', { genreId: genre });
+        });
       }
 
       if (priceRange) {
@@ -83,20 +88,19 @@ export class BooksService {
           max: parseInt(priceRange[1]),
         });
       }
-      
+
       if (sort) {
         if (sort !== 'author.author_name') {
           builder.orderBy(`book.${sort}`, 'DESC');
         } else {
           builder.orderBy(sort, 'DESC');
         }
-        
       }
     }
     const [result, total] = await builder
       .take(12)
       .skip((paginationOffset - 1) * 12)
-      .getManyAndCount();    
+      .getManyAndCount();
     return { result, total };
   }
 
@@ -105,7 +109,7 @@ export class BooksService {
       where: { id: id },
       relations: {
         author: true,
-        rating: true
+        rating: true,
       },
     });
     return book;
