@@ -1,6 +1,7 @@
 import { Book } from "src/books/entities/books.entity";
 import { Books_Rating_Interface } from "src/interfaces/interfaces";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/users/entities/user.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -15,7 +16,12 @@ export class BooksRating implements Books_Rating_Interface {
   @Column({ nullable: true })
   bookId: string
 
-  @OneToOne(() => Book, (book) => book.rating)
-  @JoinColumn()
+  @Column()
+  userId: string
+
+  @ManyToOne(() => Book, (book) => book.rating)
   book: Book
+
+  @ManyToOne(() => User, (user) => user.rating)
+  user: User
 }

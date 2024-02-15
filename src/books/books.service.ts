@@ -10,6 +10,8 @@ import { BooksPhoto } from 'src/books_photos/entities/books_photo.entity';
 import { BooksRating } from 'src/books_rating/entities/books_rating.entity';
 import { SortOptionsInterface } from 'src/interfaces/interfaces';
 import { title } from 'process';
+import { BooksRatingService } from 'src/books_rating/books_rating.service';
+import { CommentsService } from 'src/comments/comments.service';
 
 @Injectable()
 export class BooksService {
@@ -22,8 +24,8 @@ export class BooksService {
     private booksGenreRep: Repository<BooksGenre>,
     @InjectRepository(BooksPhoto)
     private booksPhotoRep: Repository<BooksPhoto>,
-    @InjectRepository(BooksRating)
-    private booksRatingRep: Repository<BooksRating>,
+    private ratingService: BooksRatingService,
+    private commentsService: CommentsService
   ) {}
   async addBook(createBookDto: CreateBookDto) {
     const { title, description, price, author_name, genre_name } =
@@ -58,8 +60,10 @@ export class BooksService {
   ): Promise<{ result: Book[]; total: number }> {
     const builder = this.bookRep
       .createQueryBuilder('book')
-      .leftJoinAndSelect('book.author', 'author');
-    //.leftJoinAndSelect('book.rating', 'rating');
+      .leftJoinAndSelect('book.author', 'author')
+      .leftJoinAndSelect('book.comments', 'comments', 'comments.bookId = book.id')
+      .leftJoinAndSelect('comments.user', 'user', 'comments.userId = user.id')
+      .leftJoinAndSelect('user.avatar', 'avatar', 'user.avatarId = avatar.id')
 
     if (searchString) {
       builder
@@ -110,9 +114,18 @@ export class BooksService {
       relations: {
         author: true,
         rating: true,
+        comments: {
+          user: {
+            avatar: true
+          }
+        }
       },
     });
     return book;
+  }
+
+  async countRating(bookId: string) {
+    return this.ratingService.countRatingForBook(bookId)
   }
 
   async updateBook(id: number, updateBookDto: UpdateBookDto) {}
@@ -122,4 +135,8 @@ export class BooksService {
   }
 
   async addPhoto() {}
+
+  async getComments (bookId: string) {
+    return this.commentsService.getBookComments(bookId)
+  }
 }

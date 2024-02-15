@@ -18,6 +18,5 @@ export class UserAvatar implements User_Avatar_Interface{
   userId: string;
 
   @OneToOne(() => User, (user) => user.avatar, )
-  @JoinColumn()
   user: User
 }

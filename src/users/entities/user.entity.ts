@@ -1,3 +1,4 @@
+import { BooksRating } from "src/books_rating/entities/books_rating.entity";
 import { Cart } from "src/cart/entities/cart.entity";
 import { Comment } from "src/comments/entities/comment.entity";
 import { Favorite } from "src/favorites/entities/favorite.entity";
@@ -29,7 +30,9 @@ export class User implements UsersInterface {
   @Column()
   favoriteId: string;
 
-  @OneToOne(() => Cart, (cart) => cart.user)
+  @OneToOne(() => Cart, (cart) => cart.user, {
+    onDelete: 'CASCADE'
+  })
   @JoinColumn()
   cart: Cart;
 
@@ -47,5 +50,11 @@ export class User implements UsersInterface {
   @OneToOne(() => UserAvatar, (avatar) => avatar.user, {
     onDelete: 'CASCADE'
   })
+  @JoinColumn()
   avatar: UserAvatar
+
+  @OneToMany(() => BooksRating, (rating) => rating.user, {
+    onDelete: 'CASCADE'
+  })
+  rating: BooksRating[]
 }

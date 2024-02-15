@@ -4,7 +4,6 @@ import { Cart } from './entities/cart.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { CartBooksService } from 'src/cart_books/cart_books.service';
-import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class CartService {
@@ -14,7 +13,6 @@ export class CartService {
     @InjectRepository(User)
     private userRep: Repository<User>,
     private cartBooksService: CartBooksService,
-    private moduleRef: ModuleRef
   ) {}
   async create() {
     const cart = this.cartRep.create();
@@ -23,10 +21,10 @@ export class CartService {
   }
 
   async getAllCartBooks(userId: string) {
-    const cart = await this.cartRep.findOneBy({ userId: userId });
-    if (!cart) {
-      throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
-    }
+    // const cart = await this.cartRep.findOneBy({ userId: userId });
+    // if (!cart) {
+    //   throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
+    // }
   }
 
   async addToCart(bookId: string, userId: string) {
@@ -34,7 +32,6 @@ export class CartService {
   }
 
   async removeFromCart(bookId: string, userId: string) {
-    this.moduleRef.get(CartBooksService)
     await this.cartBooksService.remove(bookId, userId)
   }
 

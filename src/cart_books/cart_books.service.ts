@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartBook } from './entities/cart_book.entity';
 import { Repository } from 'typeorm';
 import { Cart } from 'src/cart/entities/cart.entity';
 import { Book } from 'src/books/entities/books.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CartBooksService {
@@ -14,9 +15,15 @@ export class CartBooksService {
     private cartRep: Repository<Cart>,
     @InjectRepository(Book)
     private bookRep: Repository<Book>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
   async create(userId: string, bookId: string) {
-    const cart = await this.cartRep.findOneBy({ userId: userId });
+    const user = await this.userRepository.findOneBy({ id: userId }) 
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    const cart = await this.cartRep.findOneBy({ id: user.cartId });
     if (!cart) {
     }
     const book = await this.bookRep.findOneBy({ id: bookId });
@@ -50,22 +57,30 @@ export class CartBooksService {
   }
 
   async remove(bookId: string, userId: string) {
-    const userCart = await this.cartRep.findOneBy({ userId: userId });
-    if (!userCart) {
+    const user = await this.userRepository.findOneBy({ id: userId }) 
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    const cart = await this.cartRep.findOneBy({ id: user.cartId });
+    if (!cart) {
     }
     const cartBook = await this.cartBookRep.findOneBy({
-      cartId: userCart.id,
+      cartId: cart.id,
       bookId: bookId,
     });
     await this.cartBookRep.remove(cartBook);
   }
   
   async changeAmount(bookId: string, userId: string, isIncrement: boolean) {
-    const userCart = await this.cartRep.findOneBy({ userId: userId });
-    if (!userCart) {
+    const user = await this.userRepository.findOneBy({ id: userId }) 
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    const cart = await this.cartRep.findOneBy({ id: user.cartId });
+    if (!cart) {
     }
     const cartBook = await this.cartBookRep.findOneBy({
-      cartId: userCart.id,
+      cartId: cart.id,
       bookId: bookId,
     });
     if (isIncrement) {

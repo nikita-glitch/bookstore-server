@@ -12,6 +12,7 @@ import {
   UseGuards,
   StreamableFile,
   Delete,
+  Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -101,37 +102,80 @@ export class UsersController {
 
   @Delete('')
   async removeFromCart(
-    @Param()
+    @Param('userId')
+    userId: string,
     @Body()
+    bookId: string,
     @Res() res: Response
   ) {
-    return res.status(HttpStatus.OK).json()
+    await this.usersService.removeBookFromCart(bookId, userId)
+    return res.status(HttpStatus.OK).json({ message: "Book was succsessfully removed from cart" })
   }
 
   @Delete('')
   async removeFromFavorite(
-    @Param()
+    @Param('userId')
+    userId: string,
     @Body()
+    bookId: string,
     @Res() res: Response
   ) {
-    return res.status(HttpStatus.OK).json()
+    await this.usersService.removeBookFromFavorites(bookId, userId)
+    return res.status(HttpStatus.OK).json({ message: "Book was succsessfully removed from favorite" })
   }
 
   @Patch('')
   async addToCart(
-    @Param()
+    @Param('userId')
+    userId: string,
     @Body()
+    bookId: string,
     @Res() res: Response
   ) {
-    return res.status(HttpStatus.OK).json()
+    await this.usersService.addBookToCart(bookId, userId)
+    return res.status(HttpStatus.CREATED).json({ message: "Book was succsessfully added to cart" })
   }
 
   @Patch('')
   async addToFavorite(
-    @Param()
+    @Param('userId')
+    userId: string,
     @Body()
+    bookId: string,
     @Res() res: Response
   ) {
-    return res.status(HttpStatus.OK).json()
+    await this.usersService.addBookToFavorites(bookId, userId)
+    return res.status(HttpStatus.CREATED).json({ message: "Book was succsessfully added to favorite" })
+  }
+
+  @UseGuards(AuthGuard)
+  @Put('rating')
+  async setRating (
+  @Param('userId')
+  userId: string,
+  @Body()
+  bookId: string,
+  ratingValue: number,
+  @Res() res: Response
+  ) {
+    await this.usersService.setRating(userId, bookId, ratingValue)
+    return res.status(HttpStatus.OK).json({ message: 'Rating setted succsessfully' })
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('')
+  async createcomment (
+  @Param()
+  params: {
+    bookId: string,
+    userId: string
+  },
+  @Body()
+  commentText: string,
+  @Res() res: Response
+  ) {
+    const { bookId, userId } = params;
+    await this.usersService.createComment(commentText, userId, bookId)
+    return res.status(HttpStatus.OK).json({ message: 'Comment added succsessfully' })
   }
 }

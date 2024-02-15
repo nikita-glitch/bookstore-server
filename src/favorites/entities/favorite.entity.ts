@@ -9,8 +9,6 @@ export class Favorite {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  userId: string;
 
   @OneToOne(() => User, (user) => user.favorite)
   user: User

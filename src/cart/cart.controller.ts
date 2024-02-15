@@ -28,18 +28,7 @@ export class CartController {
     const cartBooks = await this.cartService.getAllCartBooks(userId)
     return res.status(HttpStatus.OK).json(cartBooks)
   }
-  @UseGuards(AuthGuard)
-  @Delete('')
-  async removeFromCart(
-    @Param('userId')
-    userId: string,
-    @Body()
-    bookId: string,
-    @Res() res: Response,
-  ) {
-    await this.cartService.removeFromCart(bookId, userId)
-    return res.status(HttpStatus.OK).json({ message: 'Book was deleted succsessfully' })
-  }
+ 
   @UseGuards(AuthGuard)
   @Patch('')
   async changeAmount(
@@ -53,16 +42,5 @@ export class CartController {
     await this.cartService.changeAmount(bookId, userId, isIncrement)
     return res.status(HttpStatus.OK).json({ message: 'Amount was changed succsessfully' })
   }
-  @UseGuards(AuthGuard)
-  @Post('')
-  async addToCart(
-    @Param('userId')
-    userId: string,
-    @Body()
-    bookId: string,
-    @Res() res: Response,
-  ) {
-    await this.cartService.addToCart(bookId, userId)
-    return res.status(HttpStatus.CREATED).json({ message: 'Book was added to cart succsessfully' })
-  }
+
 }

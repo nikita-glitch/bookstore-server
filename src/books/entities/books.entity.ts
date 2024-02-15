@@ -30,6 +30,9 @@ export class Book implements BooksInterface {
   @Column()
   genreId: string;
 
+  @Column({ default: 0 })
+  bookRating: number;
+
   @OneToOne(() => BooksAuthor, (author) => author.book)
   @JoinColumn()
   author: BooksAuthor;
@@ -37,7 +40,7 @@ export class Book implements BooksInterface {
   @ManyToOne(() => BooksGenre, (genre) => genre.book)
   genre: BooksGenre;
 
-  @OneToOne(() =>  BooksRating, (rating) => rating.book)
+  @OneToMany(() =>  BooksRating, (rating) => rating.book)
   rating: BooksRating;
 
   @OneToMany(() => Comment, (comment) => comment.book)

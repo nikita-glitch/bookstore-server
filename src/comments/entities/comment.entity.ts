@@ -1,7 +1,7 @@
 import { Book } from 'src/books/entities/books.entity';
 import { CommentInterface } from 'src/interfaces/interfaces';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Comment implements CommentInterface {
@@ -16,6 +16,9 @@ export class Comment implements CommentInterface {
 
   @Column()
   bookId: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.comments)
   user: User;

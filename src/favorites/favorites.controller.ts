@@ -20,31 +20,4 @@ export class FavoritesController {
     return res.status(HttpStatus.OK).json(favorite) 
   }
 
-  @Post()
-  @UseGuards(AuthGuard)
-  async addBookToFavorite(
-    @Param('userId')
-    userId: string,
-    @Body() 
-    bookId: string,
-    @Res() res: Response
-    ) {
-    await this.favoritesService.addBookToFavorite(bookId, userId);
-    return res.status(HttpStatus.OK).json({ message: "Book was succsessfully add" })
-  }
-
-  @Delete('')
-  @UseGuards(AuthGuard)
-  async deleteFromFavorite(
-    @Param('userId')
-    userId: string,
-    @Body() 
-    bookId: string,
-    @Res() res: Response 
-  ) {
-    console.log(bookId);
-    
-    await this.favoritesService.removeBookFromFavorite(bookId, userId)
-    return res.status(HttpStatus.OK).json({ message: "Book was succsessfully delete" })
-  }
 }
