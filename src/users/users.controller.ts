@@ -59,7 +59,10 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
     @Res() res: Response,
   ) {
-    const name = await this.usersService.changeProfileData(userId, updateUserDto);
+    const name = await this.usersService.changeProfileData(
+      userId,
+      updateUserDto,
+    );
     return res
       .status(HttpStatus.OK)
       .json({ message: 'Profile updated succsessfully', name });
@@ -89,7 +92,7 @@ export class UsersController {
     @Res() res: Response,
   ) {
     console.log(file);
-    
+
     await this.usersService.addUserAvatar(
       userId,
       file.originalname,
@@ -100,82 +103,95 @@ export class UsersController {
       .json({ message: 'Avatar uploaded succsessfully' });
   }
 
-  @Delete('')
+  @Delete('cart')
   async removeFromCart(
     @Param('userId')
     userId: string,
     @Body()
-    bookId: string,
-    @Res() res: Response
+    Body: { bookId: string },
+    @Res() res: Response,
   ) {
-    await this.usersService.removeBookFromCart(bookId, userId)
-    return res.status(HttpStatus.OK).json({ message: "Book was succsessfully removed from cart" })
+    await this.usersService.removeBookFromCart(Body.bookId, userId);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'Book was succsessfully removed from cart' });
   }
 
-  @Delete('')
+  @Delete('favorite')
   async removeFromFavorite(
     @Param('userId')
     userId: string,
     @Body()
-    bookId: string,
-    @Res() res: Response
-  ) {
-    await this.usersService.removeBookFromFavorites(bookId, userId)
-    return res.status(HttpStatus.OK).json({ message: "Book was succsessfully removed from favorite" })
+    Body: { bookId: string },
+    @Res() res: Response,
+  ) {    
+    await this.usersService.removeBookFromFavorites(Body.bookId, userId);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'Book was succsessfully removed from favorite' });
   }
 
-  @Patch('')
+  @Post('cart')
   async addToCart(
     @Param('userId')
     userId: string,
     @Body()
-    bookId: string,
-    @Res() res: Response
+    Body: { bookId: string },
+    @Res() res: Response,
   ) {
-    await this.usersService.addBookToCart(bookId, userId)
-    return res.status(HttpStatus.CREATED).json({ message: "Book was succsessfully added to cart" })
+    await this.usersService.addBookToCart(Body.bookId, userId);
+    return res
+      .status(HttpStatus.CREATED)
+      .json({ message: 'Book was succsessfully added to cart' });
   }
 
-  @Patch('')
+  @Post('favorite')
   async addToFavorite(
     @Param('userId')
     userId: string,
     @Body()
-    bookId: string,
-    @Res() res: Response
+    Body: { bookId: string },
+    @Res() res: Response,
   ) {
-    await this.usersService.addBookToFavorites(bookId, userId)
-    return res.status(HttpStatus.CREATED).json({ message: "Book was succsessfully added to favorite" })
+    await this.usersService.addBookToFavorites(Body.bookId, userId);
+    return res
+      .status(HttpStatus.CREATED)
+      .json({ message: 'Book was succsessfully added to favorite' });
   }
 
   @UseGuards(AuthGuard)
   @Put('rating')
-  async setRating (
-  @Param('userId')
-  userId: string,
-  @Body()
-  bookId: string,
-  ratingValue: number,
-  @Res() res: Response
+  async setRating(
+    @Param('userId')
+    userId: string,
+    @Body()
+    Body: { 
+    bookId: string,
+    ratingValue: number,
+    },
+    @Res() res: Response,
   ) {
-    await this.usersService.setRating(userId, bookId, ratingValue)
-    return res.status(HttpStatus.OK).json({ message: 'Rating setted succsessfully' })
+    await this.usersService.setRating(userId, Body.bookId, Body.ratingValue);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'Rating setted succsessfully' });
   }
 
   @UseGuards(AuthGuard)
-  @Post('')
-  async createcomment (
-  @Param()
-  params: {
+  @Post('comment')
+  async createcomment(
+    @Param('userId')
+    userId: string,
+    @Body()
+    Body: { 
+    commentText: string,
     bookId: string,
-    userId: string
-  },
-  @Body()
-  commentText: string,
-  @Res() res: Response
+    },
+    @Res() res: Response,
   ) {
-    const { bookId, userId } = params;
-    await this.usersService.createComment(commentText, userId, bookId)
-    return res.status(HttpStatus.OK).json({ message: 'Comment added succsessfully' })
+    await this.usersService.createComment(Body.commentText, userId, Body.bookId);
+    return res
+      .status(HttpStatus.CREATED)
+      .json({ message: 'Comment added succsessfully' });
   }
 }

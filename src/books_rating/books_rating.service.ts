@@ -17,6 +17,7 @@ export class BooksRatingService {
   ) {}
 
   async setRating(userID: string, bookId: string, ratingValue: number) {
+
     const isRatingSetted = await this.ratingRep.findOneBy({
       userId: userID,
       bookId: bookId,
@@ -25,30 +26,31 @@ export class BooksRatingService {
       await this.ratingRep.update(isRatingSetted, {
         value: ratingValue,
       });
-      return;
-    }
-    const user = await this.userRep.findOneBy({ id: userID });
-    if (!user) {
-    }
-    const book = await this.bookRep.findOneBy({ id: bookId });
-    if (!book) {
-    }
-    const userRatingOfBook = this.ratingRep.create({
-      user: user,
-      book: book,
-      value: ratingValue,
-    });
-    Promise.all([
-      this.ratingRep.save(userRatingOfBook),
-      this.countRatingForBook(bookId),
-    ]);
+      await this.countRatingForBook(bookId);
+    } else {
+      const user = await this.userRep.findOneBy({ id: userID });
+      if (!user) {
+      }
+      const book = await this.bookRep.findOneBy({ id: bookId });
+      if (!book) {
+      }
+      const userRatingOfBook = this.ratingRep.create({
+        user: user,
+        book: book,
+        value: ratingValue,
+      });
+      await this.ratingRep.save(userRatingOfBook);
 
+      await this.countRatingForBook(bookId);
+    }
   }
 
   async countRatingForBook(bookId: string) {
+    
     const averageRating = await this.ratingRep.average('value', {
       bookId: bookId,
     });
+    
     const bookToUpdate = await this.bookRep.findOneBy({ id: bookId });
     await this.bookRep.update(bookToUpdate, { bookRating: averageRating });
 

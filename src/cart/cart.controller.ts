@@ -34,12 +34,12 @@ export class CartController {
   async changeAmount(
     @Param('userId')
     userId: string,
-    @Body()
+    @Body() Body: {
     bookId: string,
-    isIncrement: boolean,
+    isIncrement: boolean,},
     @Res() res: Response,
   ) {
-    await this.cartService.changeAmount(bookId, userId, isIncrement)
+    await this.cartService.changeAmount(Body.bookId, userId, Body.isIncrement)
     return res.status(HttpStatus.OK).json({ message: 'Amount was changed succsessfully' })
   }
 

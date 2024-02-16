@@ -12,10 +12,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { BooksRatingService } from 'src/books_rating/books_rating.service';
 import { CommentsService } from 'src/comments/comments.service';
 import { Comment } from 'src/comments/entities/comment.entity';
+import { BooksPhotosService } from 'src/books_photos/books_photos.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Book, BooksAuthor, BooksGenre, BooksPhoto, BooksRating, User, Comment]), JwtModule],
   controllers: [BooksController, ],
-  providers: [BooksService, BooksRatingService, CommentsService],
+  providers: [BooksService, BooksRatingService, CommentsService, BooksPhotosService],
 })
 export class BooksModule {}

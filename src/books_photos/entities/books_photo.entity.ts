@@ -9,7 +9,10 @@ export class BooksPhoto implements Books_Photos_Interface {
   id: string;
 
   @Column()
-  photo: string;
+  photoName: string;
+
+  @Column({ type: 'bytea' })
+  data: Uint8Array;
 
   @Column()
   bookId: string;

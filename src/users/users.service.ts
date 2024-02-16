@@ -82,12 +82,21 @@ export class UsersService {
       where: { id: userId },
       relations: {
         cart: {
-          cartBooks: true
+          cartBooks: {
+            book: {
+              author: true,
+            },
+          },
         },
         favorite: {
-          favoriteBooks: true
-        }
-      }
+          favoriteBooks: {
+            book: {
+              author: true,
+            },
+          },
+        },
+        rating: true
+      },
     });
   }
 

@@ -12,6 +12,7 @@ import { SortOptionsInterface } from 'src/interfaces/interfaces';
 import { title } from 'process';
 import { BooksRatingService } from 'src/books_rating/books_rating.service';
 import { CommentsService } from 'src/comments/comments.service';
+import { BooksPhotosService } from 'src/books_photos/books_photos.service';
 
 @Injectable()
 export class BooksService {
@@ -22,8 +23,7 @@ export class BooksService {
     private booksAuthorRep: Repository<BooksAuthor>,
     @InjectRepository(BooksGenre)
     private booksGenreRep: Repository<BooksGenre>,
-    @InjectRepository(BooksPhoto)
-    private booksPhotoRep: Repository<BooksPhoto>,
+    private booksPhotoService: BooksPhotosService,
     private ratingService: BooksRatingService,
     private commentsService: CommentsService
   ) {}
@@ -64,7 +64,7 @@ export class BooksService {
       .leftJoinAndSelect('book.comments', 'comments', 'comments.bookId = book.id')
       .leftJoinAndSelect('comments.user', 'user', 'comments.userId = user.id')
       .leftJoinAndSelect('user.avatar', 'avatar', 'user.avatarId = avatar.id')
-
+      .leftJoinAndSelect('book.rating', 'rating', 'rating.bookId = book.id')
     if (searchString) {
       builder
         .where('book.title LIKE :searchString', {
@@ -134,7 +134,13 @@ export class BooksService {
     return `This action removes a #${id} book`;
   }
 
-  async addPhoto() {}
+  async addPhoto(fileName: string, dataBuffer: Buffer, bookId: string) {
+    const book = await this.bookRep.findOneBy({ id: bookId })
+    if (!book) {
+      throw new HttpException('Book does not found', HttpStatus.NOT_FOUND);
+    }
+    await this.booksPhotoService.create(fileName, dataBuffer, bookId)
+  }
 
   async getComments (bookId: string) {
     return this.commentsService.getBookComments(bookId)

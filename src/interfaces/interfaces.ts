@@ -37,7 +37,8 @@ export interface User_Avatar_Interface {
 }
 
 export interface Books_Photos_Interface {
-  photo: string;
+  photoName: string;
+  data: Uint8Array;
 }
 
 export interface CartBookInterface {

@@ -12,6 +12,8 @@ import {
   Res,
   UseGuards,
   Req,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -20,6 +22,8 @@ import { Roles } from 'src/decorator/role.decorator';
 import { Request, Response } from 'express';
 import { AuthGuard } from 'src/Guards/authGuard';
 import { SortOptionsInterface } from 'src/interfaces/interfaces';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { log } from 'console';
 
 @Controller('books')
 export class BooksController {
@@ -88,12 +92,19 @@ export class BooksController {
 
   @UseGuards(AuthGuard)
   @Roles('admin')
-  @Put('')
-  async addPhoto() {}
+  @UseInterceptors(FileInterceptor('file'))
+  @Post(':id/photo')
+  async addPhoto(
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Param('id')
+    id: string,
 
-  @UseGuards(AuthGuard)
-  @Post()
-  async addComment() {}
+    @Res() res: Response,
+  ) {
+    await this.booksService.addPhoto(file.originalname, file.buffer, id);
+    return res.status(HttpStatus.OK).json({ message: "Photo added" });
+  }
 
   @UseGuards(AuthGuard)
   @Post('rating')
