@@ -42,6 +42,7 @@ export class CartBooksService {
       amount: 1,
     });
     await this.cartBookRep.save(cartBook);
+    return cartBook
   }
 
   async findAllCartBooks(cartId: string) {

@@ -46,10 +46,11 @@ export class Book implements BooksInterface {
   @OneToMany(() => Comment, (comment) => comment.book)
   comments: Comment[]
 
-  @OneToMany(() => BooksPhoto, (photo) => photo.book, {
+  @OneToOne(() => BooksPhoto, (photo) => photo.book, {
     onDelete: 'CASCADE'
   })
-  photos: BooksPhoto[]
+  @JoinColumn()
+  photos: BooksPhoto
 
   @OneToOne(() => CartBook, (cartBook) => cartBook.book)
   cartBook: CartBook

@@ -14,6 +14,8 @@ import {
   Req,
   UploadedFile,
   UseInterceptors,
+  StreamableFile,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -23,7 +25,7 @@ import { Request, Response } from 'express';
 import { AuthGuard } from 'src/Guards/authGuard';
 import { SortOptionsInterface } from 'src/interfaces/interfaces';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { log } from 'console';
+import { Readable } from 'stream';
 
 @Controller('books')
 export class BooksController {
@@ -62,10 +64,26 @@ export class BooksController {
   async findOne(
     @Param('id')
     id: string,
-    @Req() req: Request,
   ) {
     const book = await this.booksService.findOne(id);
+    
     return book;
+  }
+
+  @Get(':id/photo')
+  async getBookPhoto(
+    @Param('id')
+    id: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const photo = await this.booksService.getBookPhoto(id);    
+    const stream = Readable.from(photo.data);
+    res.set({
+      'Content-Disposition': `inline; filename="${photo.photoName}"`,
+      'Content-Type': 'image',
+    });
+    return new StreamableFile(stream);
+
   }
 
   @UseGuards(AuthGuard)

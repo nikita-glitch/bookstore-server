@@ -58,6 +58,7 @@ export class BooksService {
     searchString?: string,
     sortOptions?: SortOptionsInterface,
   ): Promise<{ result: Book[]; total: number }> {
+    
     const builder = this.bookRep
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author')
@@ -65,6 +66,7 @@ export class BooksService {
       .leftJoinAndSelect('comments.user', 'user', 'comments.userId = user.id')
       .leftJoinAndSelect('user.avatar', 'avatar', 'user.avatarId = avatar.id')
       .leftJoinAndSelect('book.rating', 'rating', 'rating.bookId = book.id')
+
     if (searchString) {
       builder
         .where('book.title LIKE :searchString', {
@@ -144,5 +146,9 @@ export class BooksService {
 
   async getComments (bookId: string) {
     return this.commentsService.getBookComments(bookId)
+  }
+
+  async getBookPhoto(bookId: string) {
+    return this.booksPhotoService.findOne(bookId)
   }
 }

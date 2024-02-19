@@ -28,14 +28,14 @@ export class CartService {
   }
 
   async addToCart(bookId: string, userId: string) {
-    await this.cartBooksService.create(userId, bookId)
+    this.cartBooksService.create(userId, bookId)
   }
 
   async removeFromCart(bookId: string, userId: string) {
-    await this.cartBooksService.remove(bookId, userId)
+    this.cartBooksService.remove(bookId, userId)
   }
 
   async changeAmount(bookId: string, userId: string, isIncrement: boolean) {
-    await this.cartBooksService.changeAmount(bookId, userId, isIncrement)
+    this.cartBooksService.changeAmount(bookId, userId, isIncrement)
   }
 }

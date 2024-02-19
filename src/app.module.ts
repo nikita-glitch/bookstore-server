@@ -31,13 +31,16 @@ import { Comment } from './comments/entities/comment.entity';
 import { APP_FILTER } from '@nestjs/core';
 import { customExceptionFilter } from './exceptionFilter/exception.filter';
 import * as path from 'path';
-
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 const filePath = path.join(path.dirname(__dirname), '/src/.env');
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: filePath }),
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', 'static'),
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -59,7 +62,7 @@ const filePath = path.join(path.dirname(__dirname), '/src/.env');
         CartBook,
         FavoriteBook,
       ],
-       synchronize: true,
+      synchronize: true,
     }),
     UsersModule,
     AuthModule,
@@ -74,12 +77,14 @@ const filePath = path.join(path.dirname(__dirname), '/src/.env');
     FavoriteBooksModule,
     UserAvatarModule,
     BooksPhotosModule,
-  
   ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_FILTER,
-    useClass: customExceptionFilter
-  }],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: customExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

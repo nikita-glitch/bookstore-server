@@ -27,7 +27,8 @@ export class BooksPhotosService {
     await this.photoRep.save(photo);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} booksPhoto`;
+  async findOne(bookId: string) {
+    const photo  = this.photoRep.findOneBy({ bookId: bookId })
+    return photo
   }
 }

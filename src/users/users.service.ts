@@ -105,19 +105,19 @@ export class UsersService {
   }
 
   async addBookToCart(bookId: string, userId: string) {
-    await this.cartService.addToCart(bookId, userId);
+    return this.cartService.addToCart(bookId, userId);
   }
 
   async addBookToFavorites(bookId: string, userId: string) {
-    await this.favoriteService.addBookToFavorite(bookId, userId);
+    return this.favoriteService.addBookToFavorite(bookId, userId);
   }
 
   async removeBookFromCart(bookId: string, userId: string) {
-    await this.cartService.removeFromCart(bookId, userId);
+    this.cartService.removeFromCart(bookId, userId);
   }
 
   async removeBookFromFavorites(bookId: string, userId: string) {
-    await this.favoriteService.removeBookFromFavorite(bookId, userId);
+    this.favoriteService.removeBookFromFavorite(bookId, userId);
   }
 
   async setRating(userId: string, bookId: string, ratingValue: number) {

@@ -139,10 +139,10 @@ export class UsersController {
     Body: { bookId: string },
     @Res() res: Response,
   ) {
-    await this.usersService.addBookToCart(Body.bookId, userId);
+    const cartBook = await this.usersService.addBookToCart(Body.bookId, userId);
     return res
       .status(HttpStatus.CREATED)
-      .json({ message: 'Book was succsessfully added to cart' });
+      .json({ cartBook: cartBook, message: 'Book was succsessfully added to cart' });
   }
 
   @Post('favorite')
@@ -153,10 +153,10 @@ export class UsersController {
     Body: { bookId: string },
     @Res() res: Response,
   ) {
-    await this.usersService.addBookToFavorites(Body.bookId, userId);
+    const favoriteBook = await this.usersService.addBookToFavorites(Body.bookId, userId);
     return res
       .status(HttpStatus.CREATED)
-      .json({ message: 'Book was succsessfully added to favorite' });
+      .json({ favoriteBook: favoriteBook, message: 'Book was succsessfully added to favorite' });
   }
 
   @UseGuards(AuthGuard)
@@ -171,10 +171,10 @@ export class UsersController {
     },
     @Res() res: Response,
   ) {
-    await this.usersService.setRating(userId, Body.bookId, Body.ratingValue);
+    const {userRatingOfBook, ratingOfBook} = await this.usersService.setRating(userId, Body.bookId, Body.ratingValue);
     return res
       .status(HttpStatus.OK)
-      .json({ message: 'Rating setted succsessfully' });
+      .json({ ratingOfBook: ratingOfBook, userRatingOfBook: userRatingOfBook, message: 'Rating setted succsessfully' });
   }
 
   @UseGuards(AuthGuard)
@@ -189,9 +189,9 @@ export class UsersController {
     },
     @Res() res: Response,
   ) {
-    await this.usersService.createComment(Body.commentText, userId, Body.bookId);
+    const comment = await this.usersService.createComment(Body.commentText, userId, Body.bookId);
     return res
       .status(HttpStatus.CREATED)
-      .json({ message: 'Comment added succsessfully' });
+      .json({ comment: comment, message: 'Comment added succsessfully' });
   }
 }

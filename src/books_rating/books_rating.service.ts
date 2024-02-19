@@ -41,7 +41,8 @@ export class BooksRatingService {
       });
       await this.ratingRep.save(userRatingOfBook);
 
-      await this.countRatingForBook(bookId);
+      const ratingOfBook = await this.countRatingForBook(bookId);
+      return {userRatingOfBook: userRatingOfBook, ratingOfBook: ratingOfBook}
     }
   }
 
@@ -52,7 +53,7 @@ export class BooksRatingService {
     });
     
     const bookToUpdate = await this.bookRep.findOneBy({ id: bookId });
-    await this.bookRep.update(bookToUpdate, { bookRating: averageRating });
+    return this.bookRep.update(bookToUpdate, { bookRating: averageRating });
 
     // const averageRating = this.ratingRep
     // .createQueryBuilder("rating")
