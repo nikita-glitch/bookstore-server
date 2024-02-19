@@ -77,12 +77,12 @@ export class BooksController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const photo = await this.booksService.getBookPhoto(id);    
-    const stream = Readable.from(photo.data);
-    res.set({
-      'Content-Disposition': `inline; filename="${photo.photoName}"`,
-      'Content-Type': 'image',
-    });
-    return new StreamableFile(stream);
+    // const stream = Readable.from(photo.data);
+    // res.set({
+    //   'Content-Disposition': `inline; filename="${photo.photoName}"`,
+    //   'Content-Type': 'image',
+    // });
+    // return new StreamableFile(stream);
 
   }
 
@@ -120,7 +120,7 @@ export class BooksController {
 
     @Res() res: Response,
   ) {
-    await this.booksService.addPhoto(file.originalname, file.buffer, id);
+    await this.booksService.addPhoto(file, id);
     return res.status(HttpStatus.OK).json({ message: "Photo added" });
   }
 

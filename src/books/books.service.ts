@@ -136,12 +136,12 @@ export class BooksService {
     return `This action removes a #${id} book`;
   }
 
-  async addPhoto(fileName: string, dataBuffer: Buffer, bookId: string) {
+  async addPhoto(file: Express.Multer.File, bookId: string) {
     const book = await this.bookRep.findOneBy({ id: bookId })
     if (!book) {
       throw new HttpException('Book does not found', HttpStatus.NOT_FOUND);
     }
-    await this.booksPhotoService.create(fileName, dataBuffer, bookId)
+    await this.booksPhotoService.create(file, bookId)
   }
 
   async getComments (bookId: string) {

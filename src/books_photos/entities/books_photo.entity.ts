@@ -9,13 +9,12 @@ export class BooksPhoto implements Books_Photos_Interface {
   id: string;
 
   @Column()
-  photoName: string;
+  photo: string;
 
   @Column()
   bookId: string;
 
-  @Column({ type: 'bytea' })
-  data: Uint8Array;
+
 
   @OneToOne(() => Book, (book) => book.photos)
   book: Book

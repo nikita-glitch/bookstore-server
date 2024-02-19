@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BooksPhoto } from './entities/books_photo.entity';
 import { Repository } from 'typeorm';
 import { Book } from 'src/books/entities/books.entity';
+import { FileServise } from 'src/file_servise/file.service';
 
 @Injectable()
 export class BooksPhotosService {
@@ -12,16 +13,17 @@ export class BooksPhotosService {
     @InjectRepository(BooksPhoto)
     private photoRep: Repository<BooksPhoto>,
     @InjectRepository(Book)
-    private bookRep: Repository<BooksPhoto>
+    private bookRep: Repository<BooksPhoto>,
+    private fileService: FileServise
   ) {}
-  async create(photoName: string, dataBuffer: Buffer, bookId: string) {
+  async create(file: Express.Multer.File, bookId: string) {
     const book = await this.bookRep.findOneBy({ id: bookId })
     if (!book) {
       throw new HttpException('User does not found', HttpStatus.NOT_FOUND);
     }    
+    const picture = this.fileService.createFile(file)
     const photo = this.photoRep.create({
-      photoName,
-      data: dataBuffer,
+      photo: picture,
       book: book
     });
     await this.photoRep.save(photo);
