@@ -48,6 +48,8 @@ export class AuthService {
     .createQueryBuilder("user")
     .where("user.email = :email", { email: email })
     .addSelect("user.password")
+    .leftJoinAndSelect('user.cart', 'cart')
+    .leftJoinAndSelect('user.favorite', 'favorite')
     .getOne()
 
     if (!person) {

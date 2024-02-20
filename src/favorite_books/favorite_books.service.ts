@@ -19,27 +19,44 @@ export class FavoriteBooksService {
     private userRepository: Repository<User>,
   ) {}
   async create(bookId: string, userId: string) {
-    const user = await this.userRepository.findOneBy({ id: userId }) 
+    const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    const userFavorite = await this.favoriteRep.findOneBy({ id: user.favoriteId });
+    const userFavorite = await this.favoriteRep.findOneBy({
+      id: user.favoriteId,
+    });
     if (!userFavorite) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    const isInFavorite = await this.favoriteBookRep.findOneBy({ bookId: bookId, favoriteId: userFavorite.id })
+    const isInFavorite = await this.favoriteBookRep.findOneBy({
+      bookId: bookId,
+      favoriteId: userFavorite.id,
+    });
     if (isInFavorite) {
-      throw new HttpException('Book is alredy in favorite', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Book is alredy in favorite',
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    const book = await this.bookRep.findOneBy({ id: bookId })
+    const book = await this.bookRep.findOne({
+      where: { 
+        id: bookId 
+      },
+      relations: {
+        author: true,
+        photos: true,
+      },
+    });
     if (!book) {
       throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
     }
     const favBook = this.favoriteBookRep.create({
       favorite: userFavorite,
-      book: book
-    })
-    await this.favoriteBookRep.save(favBook)
+      book: book,
+    });
+    await this.favoriteBookRep.save(favBook);
+    return favBook;
   }
 
   async findAllBooks(favoriteId: string) {
@@ -48,14 +65,14 @@ export class FavoriteBooksService {
         favoriteId: favoriteId,
       },
       relations: {
-        book: true
-      }
-    })
-    return booksInFavorite
+        book: true,
+      },
+    });
+    return booksInFavorite;
   }
 
   async remove(bookId: string, userId: string) {
-    const user = await this.userRepository.findOneBy({ id: userId }) 
+    const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -65,8 +82,8 @@ export class FavoriteBooksService {
     }
     const favBook = await this.favoriteBookRep.findOneBy({
       favoriteId: favorite.id,
-      bookId: bookId
-    })
+      bookId: bookId,
+    });
     await this.favoriteBookRep.remove(favBook);
   }
 }

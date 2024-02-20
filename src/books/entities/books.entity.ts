@@ -30,7 +30,7 @@ export class Book implements BooksInterface {
   @Column()
   genreId: string;
 
-  @Column({ default: 0 })
+  @Column({ default: 0, type: 'double precision' })
   bookRating: number;
 
   @OneToOne(() => BooksAuthor, (author) => author.book)

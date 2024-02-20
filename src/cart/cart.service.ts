@@ -28,7 +28,7 @@ export class CartService {
   }
 
   async addToCart(bookId: string, userId: string) {
-    this.cartBooksService.create(userId, bookId)
+    return this.cartBooksService.create(userId, bookId)
   }
 
   async removeFromCart(bookId: string, userId: string) {

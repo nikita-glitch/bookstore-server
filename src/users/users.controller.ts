@@ -170,7 +170,7 @@ export class UsersController {
     ratingValue: number,
     },
     @Res() res: Response,
-  ) {
+  ) {    
     const {userRatingOfBook, ratingOfBook} = await this.usersService.setRating(userId, Body.bookId, Body.ratingValue);
     return res
       .status(HttpStatus.OK)

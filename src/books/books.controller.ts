@@ -136,12 +136,22 @@ export class BooksController {
   }
 
   @Get(':id/comments')
-  async getcomments(
+  async getComments(
     @Param('id')
     id: string,
     @Res() res: Response,
   ) {
     const comments = await this.booksService.getComments(id);
+    return res.status(HttpStatus.OK).json(comments);
+  }
+
+  @Get(':id/rating')
+  async getRating(
+    @Param('id')
+    id: string,
+    @Res() res: Response,
+  ) {
+    const comments = await this.booksService.countRating(id);
     return res.status(HttpStatus.OK).json(comments);
   }
 }

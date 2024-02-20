@@ -25,17 +25,30 @@ export class CartBooksService {
     }
     const cart = await this.cartRep.findOneBy({ id: user.cartId });
     if (!cart) {
+      throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
     }
-    const book = await this.bookRep.findOneBy({ id: bookId });
+    const book = await this.bookRep.findOne({ 
+      where: {
+        id: bookId
+      },
+      relations: {
+        author: true,
+        photos: true
+      }
+    });
     if (!book) {
+      throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
     }
     const isInCart = await this.cartBookRep.findOneBy({
       bookId: bookId,
       cartId: cart.id,
     });
+
     if (isInCart) {
       await this.cartBookRep.update(isInCart, { amount: isInCart.amount + 1 });
-    }
+      return isInCart
+    }  
+
     const cartBook = this.cartBookRep.create({
       cart: cart,
       book: book,
@@ -87,7 +100,7 @@ export class CartBooksService {
     if (isIncrement) {
       await this.cartBookRep.update(cartBook, { amount: cartBook.amount + 1 });
     } else {
-      if (cartBook.amount === 1) {
+      if (cartBook.amount <= 1) {
         await this.cartBookRep.remove(cartBook);
       } else {
         await this.cartBookRep.update(cartBook, {

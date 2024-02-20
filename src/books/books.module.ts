@@ -13,10 +13,11 @@ import { BooksRatingService } from 'src/books_rating/books_rating.service';
 import { CommentsService } from 'src/comments/comments.service';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { BooksPhotosService } from 'src/books_photos/books_photos.service';
+import { FileServise } from 'src/file_servise/file.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Book, BooksAuthor, BooksGenre, BooksPhoto, BooksRating, User, Comment]), JwtModule],
   controllers: [BooksController, ],
-  providers: [BooksService, BooksRatingService, CommentsService, BooksPhotosService],
+  providers: [BooksService, BooksRatingService, CommentsService, BooksPhotosService, FileServise],
 })
 export class BooksModule {}

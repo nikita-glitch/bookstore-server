@@ -36,7 +36,9 @@ export class CommentsService {
     const comments = this.commentRep.find({
       where: { bookId: bookId },
       relations: {
-        user: true
+        user: {
+          avatar: true
+        }
       }
     });
     return comments;

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BooksRating } from './entities/books_rating.entity';
 import { Repository } from 'typeorm';
@@ -17,7 +17,7 @@ export class BooksRatingService {
   ) {}
 
   async setRating(userID: string, bookId: string, ratingValue: number) {
-
+    let userRating = null;
     const isRatingSetted = await this.ratingRep.findOneBy({
       userId: userID,
       bookId: bookId,
@@ -26,13 +26,21 @@ export class BooksRatingService {
       await this.ratingRep.update(isRatingSetted, {
         value: ratingValue,
       });
-      await this.countRatingForBook(bookId);
+      userRating = await this.ratingRep.findOneBy({
+        userId: userID,
+        bookId: bookId,
+      });
+      
     } else {
-      const user = await this.userRep.findOneBy({ id: userID });
+      const [user, book] = await Promise.all([
+        this.userRep.findOneBy({ id: userID }),
+        this.bookRep.findOneBy({ id: bookId }),
+      ]);
       if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-      const book = await this.bookRep.findOneBy({ id: bookId });
       if (!book) {
+        throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
       }
       const userRatingOfBook = this.ratingRep.create({
         user: user,
@@ -40,25 +48,19 @@ export class BooksRatingService {
         value: ratingValue,
       });
       await this.ratingRep.save(userRatingOfBook);
-
-      const ratingOfBook = await this.countRatingForBook(bookId);
-      return {userRatingOfBook: userRatingOfBook, ratingOfBook: ratingOfBook}
-    }
+      userRating = userRatingOfBook;
+    }    
+    const ratingOfBook = await this.countRatingForBook(bookId);
+    return { userRatingOfBook: userRating, ratingOfBook: ratingOfBook };
   }
 
   async countRatingForBook(bookId: string) {
-    
     const averageRating = await this.ratingRep.average('value', {
       bookId: bookId,
     });
-    
-    const bookToUpdate = await this.bookRep.findOneBy({ id: bookId });
-    return this.bookRep.update(bookToUpdate, { bookRating: averageRating });
 
-    // const averageRating = this.ratingRep
-    // .createQueryBuilder("rating")
-    // .where('books_rating.bookId = :bookId', { bookId: bookId })
-    // .select("AVG(rating.value)", "average")
-    // .getRawOne();
+    const bookToUpdate = await this.bookRep.findOneBy({ id: bookId });
+    this.bookRep.update(bookToUpdate, { bookRating: averageRating });
+    return averageRating
   }
 }

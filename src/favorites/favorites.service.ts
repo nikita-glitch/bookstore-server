@@ -31,7 +31,7 @@ export class FavoritesService {
   }
 
   async addBookToFavorite(bookId: string, userId: string) {
-    await this.favoriteBooksService.create(bookId, userId)
+    return this.favoriteBooksService.create(bookId, userId)
   }
 
   async removeBookFromFavorite(bookId: string, userId: string) {
