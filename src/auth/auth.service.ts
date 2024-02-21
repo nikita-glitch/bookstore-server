@@ -50,6 +50,7 @@ export class AuthService {
     .addSelect("user.password")
     .leftJoinAndSelect('user.cart', 'cart')
     .leftJoinAndSelect('user.favorite', 'favorite')
+    .leftJoinAndSelect('user.avatar', 'avatar')
     .getOne()
 
     if (!person) {

@@ -11,11 +11,8 @@ export class BooksPhoto implements Books_Photos_Interface {
   @Column()
   photo: string;
 
-  @Column()
-  bookId: string;
-
-
-
-  @OneToOne(() => Book, (book) => book.photos)
+  @OneToOne(() => Book, (book) => book.photos, {
+    onDelete: 'CASCADE'
+  })
   book: Book
 }

@@ -43,13 +43,13 @@ export class UsersController {
     userId: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const avatar = await this.usersService.getUserAvatar(userId);
-    const stream = Readable.from(avatar.data);
-    res.status(HttpStatus.OK).set({
-      'Content-Disposition': `inline; filename="${avatar.avatarName}"`,
-      'Content-Type': 'image',
-    });
-    return new StreamableFile(stream);
+    // const avatar = await this.usersService.getUserAvatar(userId);
+    // const stream = Readable.from(avatar.data);
+    // res.status(HttpStatus.OK).set({
+    //   'Content-Disposition': `inline; filename="${avatar.avatarName}"`,
+    //   'Content-Type': 'image',
+    // });
+    // return new StreamableFile(stream);
   }
 
   @Patch('profile/profile-change')
@@ -90,17 +90,17 @@ export class UsersController {
     @UploadedFile()
     file: Express.Multer.File,
     @Res() res: Response,
-  ) {
-    console.log(file);
-
-    await this.usersService.addUserAvatar(
+  ) {    
+    if (!file) {
+      return
+    }
+    const avatar = await this.usersService.addUserAvatar(
       userId,
-      file.originalname,
-      file.buffer,
+      file
     );
     return res
       .status(HttpStatus.OK)
-      .json({ message: 'Avatar uploaded succsessfully' });
+      .json({ avatar, message: 'Avatar uploaded succsessfully' });
   }
 
   @Delete('cart')

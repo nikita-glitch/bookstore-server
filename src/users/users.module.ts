@@ -20,6 +20,7 @@ import { CartBook } from 'src/cart_books/entities/cart_book.entity';
 import { FavoriteBook } from 'src/favorite_books/entities/favorite_book.entity';
 import { CartBooksService } from 'src/cart_books/cart_books.service';
 import { FavoriteBooksService } from 'src/favorite_books/favorite_books.service';
+import { FileServise } from 'src/file_servise/file.service';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { FavoriteBooksService } from 'src/favorite_books/favorite_books.service'
     CartService,
     FavoritesService,
     CartBooksService,
-    FavoriteBooksService
+    FavoriteBooksService,
+    FileServise
   ],
 })
 export class UsersModule {}

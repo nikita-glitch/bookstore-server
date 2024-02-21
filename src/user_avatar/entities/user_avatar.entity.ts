@@ -11,12 +11,6 @@ export class UserAvatar implements User_Avatar_Interface{
   @Column()
   avatarName: string;
 
-  @Column({ type: 'bytea' })
-  data: Uint8Array;
-
-  @Column()
-  userId: string;
-
-  @OneToOne(() => User, (user) => user.avatar, )
+  @OneToOne(() => User, (user) => user.avatar)
   user: User
 }

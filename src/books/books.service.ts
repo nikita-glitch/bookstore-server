@@ -66,6 +66,8 @@ export class BooksService {
       .leftJoinAndSelect('comments.user', 'user', 'comments.userId = user.id')
       .leftJoinAndSelect('user.avatar', 'avatar', 'user.avatarId = avatar.id')
       .leftJoinAndSelect('book.rating', 'rating', 'rating.bookId = book.id')
+      .leftJoinAndSelect('book.photos', 'photos')
+
 
     if (searchString) {
       builder
@@ -116,6 +118,7 @@ export class BooksService {
       relations: {
         author: true,
         rating: true,
+        photos: true,
         comments: {
           user: {
             avatar: true
@@ -149,6 +152,10 @@ export class BooksService {
   }
 
   async getBookPhoto(bookId: string) {
-    return this.booksPhotoService.findOne(bookId)
+    const book = await this.bookRep.findOneBy({ id: bookId })
+    if (!book) {
+      throw new HttpException('Book does not found', HttpStatus.NOT_FOUND);
+    }
+    return this.booksPhotoService.findOne(book.photos.id)
   }
 }

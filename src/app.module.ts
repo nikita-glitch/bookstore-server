@@ -32,6 +32,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { customExceptionFilter } from './exceptionFilter/exception.filter';
 import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { GenreModule } from './genre/genre.module';
+import { Genre } from './genre/entity/genre.entity';
 
 const filePath = path.join(path.dirname(__dirname), '/src/.env');
 
@@ -39,7 +41,7 @@ const filePath = path.join(path.dirname(__dirname), '/src/.env');
   imports: [
     ConfigModule.forRoot({ envFilePath: filePath }),
     ServeStaticModule.forRoot({
-      rootPath: path.join(__dirname, '..', 'static'),
+      rootPath: path.join(__dirname, "../static"),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -61,6 +63,7 @@ const filePath = path.join(path.dirname(__dirname), '/src/.env');
         BooksPhoto,
         CartBook,
         FavoriteBook,
+        Genre
       ],
       synchronize: true,
     }),
@@ -77,6 +80,7 @@ const filePath = path.join(path.dirname(__dirname), '/src/.env');
     FavoriteBooksModule,
     UserAvatarModule,
     BooksPhotosModule,
+    GenreModule,
   ],
   controllers: [AppController],
   providers: [

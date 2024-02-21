@@ -24,13 +24,13 @@ export class BooksPhotosService {
     const picture = this.fileService.createFile(file)
     const photo = this.photoRep.create({
       photo: picture,
-      book: book
+      book: book,
     });
     await this.photoRep.save(photo);
   }
 
-  async findOne(bookId: string) {
-    const photo  = this.photoRep.findOneBy({ bookId: bookId })
+  async findOne(id: string) {
+    const photo  = this.photoRep.findOneBy({ id: id })
     return photo
   }
 }

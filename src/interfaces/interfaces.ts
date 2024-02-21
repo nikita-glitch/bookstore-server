@@ -33,7 +33,6 @@ export interface CommentInterface {
 
 export interface User_Avatar_Interface {
   avatarName: string;
-  data: Uint8Array;
 }
 
 export interface Books_Photos_Interface {

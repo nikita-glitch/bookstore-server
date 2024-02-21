@@ -10,6 +10,7 @@ import { BooksRatingService } from 'src/books_rating/books_rating.service';
 import { CommentsService } from 'src/comments/comments.service';
 import { CartService } from 'src/cart/cart.service';
 import { FavoritesService } from 'src/favorites/favorites.service';
+import { FileServise } from 'src/file_servise/file.service';
 
 @Injectable()
 export class UsersService {
@@ -67,19 +68,21 @@ export class UsersService {
     await this.userRepository.update(userId, { password: hashedPass });
   }
 
-  async addUserAvatar(userId: string, fileName: string, dataBuffer: Buffer) {
+  async addUserAvatar(userId: string, file: Express.Multer.File) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new HttpException('User does not found', HttpStatus.NOT_FOUND);
     }
-    await this.userAvatarService.uploadAvatar(userId, fileName, dataBuffer);
+    return await this.userAvatarService.uploadAvatar(userId, file);
   }
 
   async orderBooks() {}
 
   async getUser(userId: string) {
     return this.userRepository.findOne({
-      where: { id: userId },
+      where: { 
+        id: userId 
+      },
       relations: {
         cart: {
           cartBooks: {
@@ -95,14 +98,12 @@ export class UsersService {
             },
           },
         },
-        rating: true
+        rating: true,
+        avatar: true
       },
     });
   }
 
-  async getUserAvatar(userId: string) {
-    return this.userAvatarService.getAvatar(userId);
-  }
 
   async addBookToCart(bookId: string, userId: string) {
     return this.cartService.addToCart(bookId, userId);

@@ -20,7 +20,7 @@ export class RoleGuard implements CanActivate {
     const id = req.params.userId    
     const user = await this.userRep.findOneBy({ id: id });
     if (!user) {
-      throw new HttpException('Post not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND)
     }        
     return user.role === requiredRole;
   }

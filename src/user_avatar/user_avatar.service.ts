@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserAvatar } from './entities/user_avatar.entity';
 import { User } from 'src/users/entities/user.entity';
+import { FileServise } from 'src/file_servise/file.service';
 
 @Injectable()
 export class UserAvatarService {
@@ -11,31 +12,29 @@ export class UserAvatarService {
     private avatarRep: Repository<UserAvatar>,
     @InjectRepository(User)
     private userRep: Repository<User>,
-  ) {}
+    private fileService: FileServise
 
-  async getAvatar(userId: string): Promise<UserAvatar> {
-    const avatar = this.avatarRep.findOneBy({ userId: userId });
-    return avatar;
-  }
+  ) {}
 
   async uploadAvatar(
     userId: string,
-    avatarName: string,
-    dataBuffer: Buffer,
-  ): Promise<void> {
+    file: Express.Multer.File,
+  ): Promise<UserAvatar> {
     const user = await this.userRep.findOneBy({ id: userId });
     if (!user) {
       throw new HttpException('User does not found', HttpStatus.NOT_FOUND);
     }
-    const existedAvatar = await this.avatarRep.findOneBy({ userId: userId });
+    const existedAvatar = await this.avatarRep.findOneBy({ id: user.avatarId });
     if (existedAvatar) {
-      await this.avatarRep.remove(existedAvatar);
+      this.fileService.removeFile(existedAvatar.avatarName)
     }
+    const avatarImage = this.fileService.createFile(file)
     const avatar = this.avatarRep.create({
-      avatarName,
-      data: dataBuffer,
+      avatarName: avatarImage,
       user: user,
     });
     await this.avatarRep.save(avatar);
+    await this.avatarRep.remove(existedAvatar);
+    return avatar
   }
 }

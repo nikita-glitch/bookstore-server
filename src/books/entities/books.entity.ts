@@ -30,6 +30,9 @@ export class Book implements BooksInterface {
   @Column()
   genreId: string;
 
+  @Column({ nullable: true })
+  photosId: string
+
   @Column({ default: 0, type: 'double precision' })
   bookRating: number;
 
@@ -46,9 +49,7 @@ export class Book implements BooksInterface {
   @OneToMany(() => Comment, (comment) => comment.book)
   comments: Comment[]
 
-  @OneToOne(() => BooksPhoto, (photo) => photo.book, {
-    onDelete: 'CASCADE'
-  })
+  @OneToOne(() => BooksPhoto, (photo) => photo.book)
   @JoinColumn()
   photos: BooksPhoto
 

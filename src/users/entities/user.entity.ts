@@ -30,6 +30,9 @@ export class User implements UsersInterface {
   @Column()
   favoriteId: string;
 
+  @Column({ nullable: true })
+  avatarId: string
+
   @OneToOne(() => Cart, (cart) => cart.user, {
     onDelete: 'CASCADE'
   })
@@ -42,14 +45,10 @@ export class User implements UsersInterface {
   @JoinColumn()
   favorite: Favorite;
 
-  @OneToMany(() => Comment, (comment) => comment.user, {
-    onDelete: 'CASCADE'
-  })
+  @OneToMany(() => Comment, (comment) => comment.user, )
   comments: Comment[]
 
-  @OneToOne(() => UserAvatar, (avatar) => avatar.user, {
-    onDelete: 'CASCADE'
-  })
+  @OneToOne(() => UserAvatar, (avatar) => avatar.user)
   @JoinColumn()
   avatar: UserAvatar
 

@@ -29,7 +29,16 @@ export class CommentsService {
       book: book,
     });
     await this.commentRep.save(comment);
-    return comment
+    return await this.commentRep.findOne({ 
+      where: {
+      id: comment.id
+      },
+      relations: {
+        user: {
+          avatar: true
+        }
+      }  
+    })
   }
 
   async getBookComments(bookId: string) {

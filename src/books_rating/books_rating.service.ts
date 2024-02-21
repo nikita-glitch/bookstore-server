@@ -58,7 +58,9 @@ export class BooksRatingService {
     const averageRating = await this.ratingRep.average('value', {
       bookId: bookId,
     });
-
+    if (!averageRating) {
+      return 0
+    }
     const bookToUpdate = await this.bookRep.findOneBy({ id: bookId });
     this.bookRep.update(bookToUpdate, { bookRating: averageRating });
     return averageRating
