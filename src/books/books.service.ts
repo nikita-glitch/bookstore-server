@@ -13,6 +13,8 @@ import { title } from 'process';
 import { BooksRatingService } from 'src/books_rating/books_rating.service';
 import { CommentsService } from 'src/comments/comments.service';
 import { BooksPhotosService } from 'src/books_photos/books_photos.service';
+import { Genre } from 'src/genre/entity/genre.entity';
+import { BooksGenreService } from 'src/books_genre/books_genre.service';
 
 @Injectable()
 export class BooksService {
@@ -22,21 +24,19 @@ export class BooksService {
     @InjectRepository(BooksAuthor)
     private booksAuthorRep: Repository<BooksAuthor>,
     @InjectRepository(BooksGenre)
-    private booksGenreRep: Repository<BooksGenre>,
+    private genreRep: Repository<Genre>,
     private booksPhotoService: BooksPhotosService,
     private ratingService: BooksRatingService,
-    private commentsService: CommentsService
+    private commentsService: CommentsService,
+    private booksGenreService: BooksGenreService,
   ) {}
   async addBook(createBookDto: CreateBookDto) {
     const { title, description, price, author_name, genre_name } =
       createBookDto;
-    const genre = await this.booksGenreRep.findOneBy({
-      genre_name: genre_name,
-    });
     const author = await this.booksAuthorRep.findOneBy({
       author_name: author_name,
     });
-    if (!author || !genre) {
+    if (!author) {
       throw new HttpException(
         'Author or genre not found',
         HttpStatus.NOT_FOUND,
@@ -46,11 +46,23 @@ export class BooksService {
       title: title,
       description: description,
       price: price,
-      genre: genre,
       author: author,
     });
-
     await this.bookRep.save(book);
+
+    genre_name.map((name) => {
+      this.booksGenreService.create(book.id, name);
+    });
+  }
+
+  async updateGenres(genre_names: string[], bookId: string) {
+    const book = await this.bookRep.findOneBy({ id: bookId });
+    if (!book) {
+      throw new HttpException('Book does not found', HttpStatus.NOT_FOUND);
+    }
+    genre_names.map((name) => {
+      this.booksGenreService.create(book.id, name);
+    });
   }
 
   async findAll(
@@ -58,16 +70,22 @@ export class BooksService {
     searchString?: string,
     sortOptions?: SortOptionsInterface,
   ): Promise<{ result: Book[]; total: number }> {
-    
     const builder = this.bookRep
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author')
-      .leftJoinAndSelect('book.comments', 'comments', 'comments.bookId = book.id')
+      .leftJoinAndSelect(
+        'book.comments',
+        'comments',
+        'comments.bookId = book.id',
+      )
       .leftJoinAndSelect('comments.user', 'user', 'comments.userId = user.id')
       .leftJoinAndSelect('user.avatar', 'avatar', 'user.avatarId = avatar.id')
       .leftJoinAndSelect('book.rating', 'rating', 'rating.bookId = book.id')
       .leftJoinAndSelect('book.photos', 'photos')
-
+      .leftJoinAndSelect(
+        'book.book_genres',
+        'book_genres'
+      );
 
     if (searchString) {
       builder
@@ -80,14 +98,9 @@ export class BooksService {
     }
     if (sortOptions) {
       const { genreId, priceRange, sort } = sortOptions;
-      
+
       if (genreId) {
-        genreId.map((genre) => {
-          if (genre === '') {
-            return
-          }
-          builder.andWhere('book.genreId = :genreId', { genreId: genre });
-        });
+        builder.where('book_genres.genreId IN (:...genreIds)', { genreIds: genreId });
       }
 
       if (priceRange) {
@@ -121,16 +134,16 @@ export class BooksService {
         photos: true,
         comments: {
           user: {
-            avatar: true
-          }
-        }
+            avatar: true,
+          },
+        },
       },
     });
     return book;
   }
 
   async countRating(bookId: string) {
-    return this.ratingService.countRatingForBook(bookId)
+    return this.ratingService.countRatingForBook(bookId);
   }
 
   async updateBook(id: number, updateBookDto: UpdateBookDto) {}
@@ -140,22 +153,22 @@ export class BooksService {
   }
 
   async addPhoto(file: Express.Multer.File, bookId: string) {
-    const book = await this.bookRep.findOneBy({ id: bookId })
+    const book = await this.bookRep.findOneBy({ id: bookId });
     if (!book) {
       throw new HttpException('Book does not found', HttpStatus.NOT_FOUND);
     }
-    await this.booksPhotoService.create(file, bookId)
+    await this.booksPhotoService.create(file, bookId);
   }
 
-  async getComments (bookId: string) {
-    return this.commentsService.getBookComments(bookId)
+  async getComments(bookId: string) {
+    return this.commentsService.getBookComments(bookId);
   }
 
   async getBookPhoto(bookId: string) {
-    const book = await this.bookRep.findOneBy({ id: bookId })
+    const book = await this.bookRep.findOneBy({ id: bookId });
     if (!book) {
       throw new HttpException('Book does not found', HttpStatus.NOT_FOUND);
     }
-    return this.booksPhotoService.findOne(book.photos.id)
+    return this.booksPhotoService.findOne(book.photos.id);
   }
 }

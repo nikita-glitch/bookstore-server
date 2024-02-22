@@ -5,25 +5,22 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 
 
 @Entity()
-export class BooksGenre implements Books_Genre_Interface {
+export class BooksGenre {
 
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ unique: true })
-  genre_name: string;
+  @Column({ nullable: true })
+  genreId: string
 
-  @OneToMany(() => Book, (book) => book.genre)
+  @Column({ nullable: true })
+  bookId: string
+
+  @ManyToOne(() => Book, (book) => book.book_genres)
   book: Book
-  
-  // @Column()
-  // genreId: string
 
-  // @ManyToOne(() => Book, (book) => book.book_genre)
-  // book: Book
-
-  // @ManyToOne(() => Genre, (genre) => genre.book_genres)
-  // genre: Genre
+  @ManyToOne(() => Genre, (genre) => genre.book_genres)
+  genre: Genre
 
 
 }

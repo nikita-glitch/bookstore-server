@@ -21,13 +21,24 @@ export class FavoritesService {
     return favorites
   }
 
-  async getBooksInFavorite(userId: string){
-    // const favorite = await this.favoritesRep.findOneBy({ userId: userId })
-    // if (!favorite) {
-    //   throw new HttpException('Favorite not found', HttpStatus.NOT_FOUND)
-    // }
-    // const books = await this.favoriteBooksService.findAllBooks(favorite.id)
-    // return books
+  async getBooksInFavorite(favoriteId: string){
+    const favorite = await this.favoritesRep.findOne({
+      where: {
+        id: favoriteId 
+      },
+      relations: {
+        favoriteBooks: {
+          book: {
+            author: true,
+          },
+        },
+      }
+    })
+    if (!favorite) {
+      throw new HttpException('Favorite not found', HttpStatus.NOT_FOUND)
+    }
+    
+    return favorite
   }
 
   async addBookToFavorite(bookId: string, userId: string) {

@@ -78,12 +78,15 @@ export class FavoriteBooksService {
     }
     const favorite = await this.favoriteRep.findOneBy({ id: user.favoriteId });
     if (!favorite) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Favorite not found', HttpStatus.NOT_FOUND);
     }
     const favBook = await this.favoriteBookRep.findOneBy({
       favoriteId: favorite.id,
       bookId: bookId,
     });
+    if (!favBook) {
+      throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
+    }
     await this.favoriteBookRep.remove(favBook);
   }
 }

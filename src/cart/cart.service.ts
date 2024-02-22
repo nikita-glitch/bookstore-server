@@ -20,11 +20,23 @@ export class CartService {
     return cart;
   }
 
-  async getAllCartBooks(userId: string) {
-    // const cart = await this.cartRep.findOneBy({ userId: userId });
-    // if (!cart) {
-    //   throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
-    // }
+  async getAllCartBooks(cartId: string) {
+    const cart = this.cartRep.findOne({
+      where: {
+        id: cartId 
+      },
+      relations: {
+        cartBooks: {
+          book: {
+            author: true,
+          },
+        }
+      }
+    });
+    if (!cart) {
+      throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
+    }
+    return cart
   }
 
   async addToCart(bookId: string, userId: string) {

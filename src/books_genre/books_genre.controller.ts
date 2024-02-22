@@ -15,10 +15,11 @@ export class BooksGenreController {
   @Post()
   async create(
     @Body()
-    booksAuthorDto: BooksGenreDto,
+    genreId: string, 
+    bookId: string,
     @Res() res: Response,
   ) {
-    this.booksGenreService.create(booksAuthorDto);
+    this.booksGenreService.create(bookId, genreId);
     res.status(HttpStatus.CREATED).json({message: "created"});
   }
 

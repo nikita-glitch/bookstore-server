@@ -27,9 +27,6 @@ export class Book implements BooksInterface {
   @Column()
   authorId: string;
 
-  @Column()
-  genreId: string;
-
   @Column({ nullable: true })
   photosId: string
 
@@ -40,8 +37,8 @@ export class Book implements BooksInterface {
   @JoinColumn()
   author: BooksAuthor;
 
-  @ManyToOne(() => BooksGenre, (genre) => genre.book)
-  genre: BooksGenre;
+  @OneToMany(() => BooksGenre, (book_genre) => book_genre.book)
+  book_genres: BooksGenre[];
 
   @OneToMany(() =>  BooksRating, (rating) => rating.book)
   rating: BooksRating;

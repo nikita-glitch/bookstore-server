@@ -11,6 +11,6 @@ export class Genre {
   @Column({ unique: true })
   genre_name: string;
 
-  // @OneToMany(() => BooksGenre, (book_genre) => book_genre.genre)
-  // book_genres: BooksGenre[]
+  @OneToMany(() => BooksGenre, (book_genre) => book_genre.genre)
+  book_genres: BooksGenre[]
 }

@@ -38,7 +38,18 @@ export class AuthService {
       cart: cart
     });    
     await this.userRepository.save(user)
-    return user
+    const userToReturn = await this.userRepository.findOne({
+      where: {
+        id: user.id 
+      },
+      relations: {
+        cart: true,
+        favorite: true,
+        rating: true,
+        avatar: true
+      },
+    });
+    return userToReturn
   }
 
   async signIn(loginUserDto: LoginUserDto) {

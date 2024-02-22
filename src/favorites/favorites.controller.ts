@@ -10,13 +10,13 @@ export class FavoritesController {
     ) {}
 
   @UseGuards(AuthGuard)
-  @Get('')
-  async getAllBooks(
-    @Param('userId') 
-    userId: string,
+  @Get(':id')
+  async getAllBooksInFavorite(
+    @Param('id') 
+    id: string,
     @Res() res: Response
     ): Promise<Response<any, Record<string, any>>> {
-    const favorite = await this.favoritesService.getBooksInFavorite(userId)
+    const favorite = await this.favoritesService.getBooksInFavorite(id)
     return res.status(HttpStatus.OK).json(favorite) 
   }
 

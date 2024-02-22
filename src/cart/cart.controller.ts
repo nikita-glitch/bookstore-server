@@ -19,13 +19,13 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @UseGuards(AuthGuard)
-  @Get('')
+  @Get(':id')
   async getAllCartBooks(
-    @Param('userId')
-    userId: string,
+    @Param('id')
+    id: string,
     @Res() res: Response,
   ) {
-    const cartBooks = await this.cartService.getAllCartBooks(userId)
+    const cartBooks = await this.cartService.getAllCartBooks(id)
     return res.status(HttpStatus.OK).json(cartBooks)
   }
  

@@ -84,20 +84,8 @@ export class UsersService {
         id: userId 
       },
       relations: {
-        cart: {
-          cartBooks: {
-            book: {
-              author: true,
-            },
-          },
-        },
-        favorite: {
-          favoriteBooks: {
-            book: {
-              author: true,
-            },
-          },
-        },
+        cart: true,
+        favorite: true,
         rating: true,
         avatar: true
       },

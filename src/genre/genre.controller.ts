@@ -12,7 +12,7 @@ export class GenreController {
   @UseGuards(AuthGuard)
   @Roles("admin")
   async createGenre(
-    @Body()
+    @Body('name')
     name: string,
     @Res() res: Response
   ) {

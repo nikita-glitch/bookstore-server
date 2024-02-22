@@ -65,7 +65,7 @@ const filePath = path.join(path.dirname(__dirname), '/src/.env');
         FavoriteBook,
         Genre
       ],
-      synchronize: true,
+      // synchronize: true,
     }),
     UsersModule,
     AuthModule,

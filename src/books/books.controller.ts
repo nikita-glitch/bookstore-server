@@ -108,6 +108,21 @@ export class BooksController {
     return this.booksService.removeBook(+id);
   }
 
+  @Post('genres')
+  @UseGuards(AuthGuard)
+  @Roles('admin')
+  async addGenres(
+  @Body()
+  Body:{
+    genre_names: string[],
+    bookId: string,
+  },
+  @Res() res: Response,
+  ) {   
+    await this.booksService.updateGenres(Body.genre_names, Body.bookId)
+    return res.status(HttpStatus.OK).json({ message: "Genre added" });
+  }
+
   @UseGuards(AuthGuard)
   @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
