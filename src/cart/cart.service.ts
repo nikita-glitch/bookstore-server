@@ -29,6 +29,7 @@ export class CartService {
         cartBooks: {
           book: {
             author: true,
+            photos: true,
           },
         }
       }

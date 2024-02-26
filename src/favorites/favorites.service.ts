@@ -30,6 +30,7 @@ export class FavoritesService {
         favoriteBooks: {
           book: {
             author: true,
+            photos: true,
           },
         },
       }

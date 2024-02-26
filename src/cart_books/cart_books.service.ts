@@ -39,9 +39,17 @@ export class CartBooksService {
     if (!book) {
       throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
     }
-    const isInCart = await this.cartBookRep.findOneBy({
-      bookId: bookId,
-      cartId: cart.id,
+    const isInCart = await this.cartBookRep.findOne({ 
+      where: {
+        bookId: bookId,
+        cartId: cart.id,
+      },
+      relations: {
+        book: {
+        author: true,
+        photos: true
+        }
+      }
     });
 
     if (isInCart) {
