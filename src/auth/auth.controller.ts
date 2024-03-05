@@ -12,7 +12,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   
   @Post('sign-up')
-  //@UsePipes(new ValidationPipe(signUpSchema))
+  @UsePipes(new ValidationPipe(signUpSchema))
   async auth(
     @Body() createUserDto: CreateUserDto,
     @Res() res: Response,

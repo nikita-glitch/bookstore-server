@@ -80,18 +80,31 @@ export class UsersService {
 
   async getUser(userId: string) {
     return this.userRepository.findOne({
-      where: { 
-        id: userId 
+      where: {
+        id: userId,
       },
       relations: {
-        cart: true,
-        favorite: true,
+        cart: {
+          cartBooks: {
+            book: {
+              author: true,
+              photos: true,
+            },
+          },
+        },
+        favorite: {
+          favoriteBooks: {
+            book: {
+              author: true,
+              photos: true,
+            },
+          },
+        },
         rating: true,
-        avatar: true
+        avatar: true,
       },
     });
   }
-
 
   async addBookToCart(bookId: string, userId: string) {
     return this.cartService.addToCart(bookId, userId);

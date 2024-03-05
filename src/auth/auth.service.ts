@@ -21,8 +21,8 @@ export class AuthService {
   async signUp(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
     const person = await this.userRepository.findOneBy({ email: email });
-   
-    if (person !== null) {
+
+    if (person) {
       throw new HttpException(
         'User with this email already exists',
         HttpStatus.BAD_REQUEST,
