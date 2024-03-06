@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { FavoriteBooksService } from './favorite_books.service';
-import { FavoriteBooksController } from './favorite_books.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
@@ -10,7 +9,6 @@ import { Book } from 'src/books/entities/books.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, FavoriteBook, Favorite, Book])],
-  controllers: [FavoriteBooksController],
   providers: [FavoriteBooksService],
   exports: [FavoriteBooksService]
 })

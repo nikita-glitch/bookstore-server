@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 const corsOptions = {
-  "origin": 'http://localhost:3000',
+  "origin": process.env.REACT_APP_URL,
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
   "allowedHeaders": ['Content-Type', 'Authorization'],
 }

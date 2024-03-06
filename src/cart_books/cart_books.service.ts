@@ -18,44 +18,52 @@ export class CartBooksService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
+
   async create(userId: string, bookId: string) {
-    const user = await this.userRepository.findOneBy({ id: userId }) 
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
-    const cart = await this.cartRep.findOneBy({ id: user.cartId });
-    if (!cart) {
-      throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
-    }
-    const book = await this.bookRep.findOne({ 
-      where: {
-        id: bookId
-      },
-      relations: {
-        author: true,
-        photos: true
-      }
-    });
+    const [user, book] = await Promise.all([
+      this.userRepository.findOneBy({ id: userId }),
+      this.bookRep.findOne({
+        where: {
+          id: bookId,
+        },
+        relations: {
+          author: true,
+          photos: true,
+        },
+      }),
+    ]);
+
     if (!book) {
       throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
     }
-    const isInCart = await this.cartBookRep.findOne({ 
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    const cart = await this.cartRep.findOneBy({ id: user.cartId });
+
+    if (!cart) {
+      throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
+    }
+
+    const isInCart = await this.cartBookRep.findOne({
       where: {
         bookId: bookId,
         cartId: cart.id,
       },
       relations: {
         book: {
-        author: true,
-        photos: true
-        }
-      }
+          author: true,
+          photos: true,
+        },
+      },
     });
 
     if (isInCart) {
       await this.cartBookRep.update(isInCart, { amount: isInCart.amount + 1 });
-      return isInCart
-    }  
+      return isInCart;
+    }
 
     const cartBook = this.cartBookRep.create({
       cart: cart,
@@ -63,7 +71,7 @@ export class CartBooksService {
       amount: 1,
     });
     await this.cartBookRep.save(cartBook);
-    return cartBook
+    return cartBook;
   }
 
   async findAllCartBooks(cartId: string) {
@@ -79,42 +87,53 @@ export class CartBooksService {
   }
 
   async remove(bookId: string, userId: string) {
-    const user = await this.userRepository.findOneBy({ id: userId }) 
+    const user = await this.userRepository.findOneBy({ id: userId });
+
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+
     const cart = await this.cartRep.findOneBy({ id: user.cartId });
+
     if (!cart) {
     }
+
     const cartBook = await this.cartBookRep.findOneBy({
       cartId: cart.id,
       bookId: bookId,
     });
+
     await this.cartBookRep.remove(cartBook);
   }
-  
+
   async changeAmount(bookId: string, userId: string, isIncrement: boolean) {
-    const user = await this.userRepository.findOneBy({ id: userId }) 
+    const user = await this.userRepository.findOneBy({ id: userId });
+
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+
     const cart = await this.cartRep.findOneBy({ id: user.cartId });
+
     if (!cart) {
+      throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
     }
+
     const cartBook = await this.cartBookRep.findOneBy({
       cartId: cart.id,
       bookId: bookId,
     });
+
     if (isIncrement) {
       await this.cartBookRep.update(cartBook, { amount: cartBook.amount + 1 });
-    } else {
-      if (cartBook.amount <= 1) {
-        await this.cartBookRep.remove(cartBook);
-      } else {
-        await this.cartBookRep.update(cartBook, {
-          amount: cartBook.amount - 1,
-        });
-      }
+      return;
     }
+    if (cartBook.amount <= 1) {
+      await this.cartBookRep.remove(cartBook);
+      return;
+    }
+    await this.cartBookRep.update(cartBook, {
+      amount: cartBook.amount - 1,
+    });
   }
 }

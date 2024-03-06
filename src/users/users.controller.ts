@@ -10,7 +10,6 @@ import {
   UploadedFile,
   UseInterceptors,
   UseGuards,
-  StreamableFile,
   Delete,
   Post,
 } from '@nestjs/common';
@@ -35,21 +34,6 @@ export class UsersController {
   ) {
     const user = await this.usersService.getUser(userId);
     return res.status(HttpStatus.OK).json(user);
-  }
-
-  @Get('profile/avatar')
-  async getAvatar(
-    @Param('userId')
-    userId: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    // const avatar = await this.usersService.getUserAvatar(userId);
-    // const stream = Readable.from(avatar.data);
-    // res.status(HttpStatus.OK).set({
-    //   'Content-Disposition': `inline; filename="${avatar.avatarName}"`,
-    //   'Content-Type': 'image',
-    // });
-    // return new StreamableFile(stream);
   }
 
   @Patch('profile/profile-change')

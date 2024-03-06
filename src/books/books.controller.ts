@@ -14,8 +14,6 @@ import {
   Req,
   UploadedFile,
   UseInterceptors,
-  StreamableFile,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -70,21 +68,6 @@ export class BooksController {
     return book;
   }
 
-  @Get(':id/photo')
-  async getBookPhoto(
-    @Param('id')
-    id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const photo = await this.booksService.getBookPhoto(id);    
-    // const stream = Readable.from(photo.data);
-    // res.set({
-    //   'Content-Disposition': `inline; filename="${photo.photoName}"`,
-    //   'Content-Type': 'image',
-    // });
-    // return new StreamableFile(stream);
-
-  }
 
   @UseGuards(AuthGuard)
   @Roles('admin')
@@ -132,7 +115,6 @@ export class BooksController {
     file: Express.Multer.File,
     @Param('id')
     id: string,
-
     @Res() res: Response,
   ) {
     await this.booksService.addPhoto(file, id);

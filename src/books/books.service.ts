@@ -33,24 +33,28 @@ export class BooksService {
   async addBook(createBookDto: CreateBookDto) {
     const { title, description, price, author_name, genre_name } =
       createBookDto;
+
     const author = await this.booksAuthorRep.findOneBy({
       author_name: author_name,
     });
+
     if (!author) {
       throw new HttpException(
         'Author or genre not found',
         HttpStatus.NOT_FOUND,
       );
     }
+
     const book = this.bookRep.create({
       title: title,
       description: description,
       price: price,
       author: author,
     });
+    
     await this.bookRep.save(book);
 
-    genre_name.map((name) => {
+    genre_name.forEach((name) => {
       this.booksGenreService.create(book.id, name);
     });
   }
@@ -60,7 +64,7 @@ export class BooksService {
     if (!book) {
       throw new HttpException('Book does not found', HttpStatus.NOT_FOUND);
     }
-    genre_names.map((name) => {
+    genre_names.forEach((name) => {
       this.booksGenreService.create(book.id, name);
     });
   }
