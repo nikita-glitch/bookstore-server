@@ -1,18 +1,19 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
+import { HttpAdapterHost } from "@nestjs/core";
 import { JsonWebTokenError, TokenExpiredError } from "@nestjs/jwt";
+import { Response } from "express";
 import { ValidationError } from "yup";
 
 @Catch()
 export class customExceptionFilter implements ExceptionFilter {
-  
   catch(exception: any, host: ArgumentsHost) {
     const context = host.switchToHttp();
-    const res = context.getResponse();
+    const res = context.getResponse<Response>();
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
-      const message = exception.message;
-      return res.status(status).json(message);
+      const message = exception.message;      
+      return res.status(status).json({message});
     }
     
     if (exception instanceof ValidationError) {

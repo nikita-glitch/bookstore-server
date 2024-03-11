@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 const corsOptions = {
   "origin": process.env.REACT_APP_URL,
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "allowedHeaders": ['Content-Type', 'Authorization'],
+  "allowedHeaders": ['Content-Type', 'Authorization', 'Options'],
 }
 
 async function bootstrap() {

@@ -16,7 +16,7 @@ export class AuthService {
     private userRepository: Repository<User>,
     private jwtServise: JwtService,
     private cartService: CartService,
-    private favoritesService: FavoritesService
+    private favoritesService: FavoritesService,
   ) {}
   async signUp(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
@@ -30,45 +30,55 @@ export class AuthService {
     }
     const hashedPass = await bcrypt.hash(password, 3);
     const cart = await this.cartService.create();
-    const favorite = await this.favoritesService.create();  
+    const favorite = await this.favoritesService.create();
     const user = this.userRepository.create({
       email: email,
       password: hashedPass,
       favorite: favorite,
-      cart: cart
-    });    
-    await this.userRepository.save(user)
+      cart: cart,
+    });
+    await this.userRepository.save(user);
     const userToReturn = await this.userRepository.findOne({
       where: {
-        id: user.id 
+        id: user.id,
       },
       relations: {
         cart: true,
         favorite: true,
-        rating: true,
-        avatar: true
       },
     });
-    return userToReturn
+    const token = await this.jwtServise.signAsync(
+      { id: user.id },
+      { secret: process.env.SECRET_KEY },
+    );
+    return { token: token, user: userToReturn };;
   }
 
   async signIn(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
-  
+
     const person = await this.userRepository
-    .createQueryBuilder("user")
-    .where("user.email = :email", { email: email })
-    .addSelect("user.password")
-    .leftJoinAndSelect('user.cart', 'cart')
-    .leftJoinAndSelect('user.favorite', 'favorite')
-    .leftJoinAndSelect('user.avatar', 'avatar')
-    .getOne()
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email: email })
+      .addSelect('user.password')
+      .leftJoinAndSelect('user.cart', 'cart')
+      .leftJoinAndSelect('cart.cartBooks', 'cartBooks')
+      .leftJoinAndSelect('cartBooks.book', 'bookInCart')
+      .leftJoinAndSelect('bookInCart.author', 'author')
+      .leftJoinAndSelect('bookInCart.photos', 'photos')
+      .leftJoinAndSelect('user.favorite', 'favorite')
+      .leftJoinAndSelect('favorite.favoriteBooks', 'favoriteBooks')
+      .leftJoinAndSelect('favoriteBooks.book', 'bookInFavorite')
+      .leftJoinAndSelect('bookInFavorite.author', 'favAuthor')
+      .leftJoinAndSelect('bookInFavorite.photos', 'favPhotos')
+      .leftJoinAndSelect('user.avatar', 'avatar')
+      .getOne();
 
     if (!person) {
       throw new HttpException('Wrong email or password', HttpStatus.NOT_FOUND);
     }
     const comparedPass = await bcrypt.compare(password, person.password);
-    
+
     if (!comparedPass) {
       throw new HttpException(
         'Wrong email or password',
@@ -80,7 +90,6 @@ export class AuthService {
       { id: person.id },
       { secret: process.env.SECRET_KEY },
     );
-    return {token: token, user: person };
+    return { token: token, user: person };
   }
-
 }

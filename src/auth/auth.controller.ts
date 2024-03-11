@@ -19,10 +19,10 @@ export class AuthController {
     @Req() req: Request
   ): Promise<Response<any, Record<string, any>>> {
     
-    await this.authService.signUp(createUserDto);
+    const tokenData = await this.authService.signUp(createUserDto);
     return res
       .status(HttpStatus.CREATED)
-      .json({ message: 'User has been created succsessfully' });
+      .json({ message: 'User has been created succsessfully', tokenData });
   }
 
   @Post('sign-in')

@@ -12,8 +12,7 @@ export class UserAvatarService {
     private avatarRep: Repository<UserAvatar>,
     @InjectRepository(User)
     private userRep: Repository<User>,
-    private fileService: FileServise
-
+    private fileService: FileServise,
   ) {}
 
   async uploadAvatar(
@@ -24,17 +23,24 @@ export class UserAvatarService {
     if (!user) {
       throw new HttpException('User does not found', HttpStatus.NOT_FOUND);
     }
-    const existedAvatar = await this.avatarRep.findOneBy({ id: user.avatarId });
-    if (existedAvatar) {
-      this.fileService.removeFile(existedAvatar.avatarName)
+    if (user.avatarId) {
+      const existedAvatar = await this.avatarRep.findOneBy({
+        id: user.avatarId,
+      });
+      
+      if (existedAvatar) {
+        this.fileService.removeFile(existedAvatar.avatarName);
+        await this.userRep.update(user.id, { avatarId: null } )
+        await this.avatarRep.remove(existedAvatar);
+      }
     }
-    const avatarImage = this.fileService.createFile(file)
+    const avatarImage = this.fileService.createFile(file);
     const avatar = this.avatarRep.create({
       avatarName: avatarImage,
       user: user,
     });
     await this.avatarRep.save(avatar);
-    await this.avatarRep.remove(existedAvatar);
-    return avatar
+
+    return avatar;
   }
 }
